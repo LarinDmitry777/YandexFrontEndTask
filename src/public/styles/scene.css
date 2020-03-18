@@ -1,0 +1,118 @@
+.content {
+  position: relative;
+}
+
+.image {
+  display: inline-block;
+  width: 950px;
+  height: 380px;
+  margin-left: 45px;
+  margin-top: 59px;
+  object-fit: cover;
+}
+
+.action-list {
+  display: flex;
+  justify-content: center;
+  width: 950px;
+  margin-left: 45px;
+  margin-top: 78px;
+}
+
+.achievements_list ~ .action-list {
+  margin-top: 20px;
+}
+
+.action-list__action {
+  display: block;
+  cursor: pointer;
+  font-family: Roboto, fantasy;
+  font-size: 34px;
+  line-height: 38px;
+  padding: 10px 20px;
+  color: #fff;
+  background: #555;
+  border-radius: 4px;
+  margin: 0 25px;
+}
+
+.text-wrapper {
+  display: table;
+}
+
+.text-wrapper_with-image {
+  color: white;
+  position: absolute;
+  top: 89px;
+  left: 75px;
+  width: 890px;
+  height: 320px;
+}
+
+.text-wrapper_without-image {
+  margin-left: 75px;
+  margin-top: 89px;
+  margin-bottom: 89px;
+}
+
+.text-wrapper__text {
+  width: 890px;
+  font-family: Gabriela, serif;
+  font-size: 22px;
+  line-height: 36px;
+}
+
+.text-wrapper__text_top-left {
+  text-align: left;
+}
+
+.text-wrapper__text_top-right {
+  text-align: right;
+}
+
+.text-wrapper__text_bottom-left {
+  display: table-cell;
+  vertical-align: bottom;
+}
+
+.text-wrapper__text_bottom-right {
+  display: table-cell;
+  vertical-align: bottom;
+  text-align: right;
+}
+
+.achievements_list {
+  margin-left: 62px;
+  margin-top: 37px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.achievement {
+  margin-bottom: 20px;
+  width: 480px;
+}
+
+.achievement__image {
+  border-radius: 50%;
+  float: left;
+  width: 147px;
+  height: 147px;
+}
+
+.achievement__text {
+  margin-left: 21px;
+  float: left;
+  font-family: Gabriela, serif;
+  font-size: 26px;
+  line-height: 38px;
+}
+
+.achievement__name {
+  margin-left: 21px;
+  margin-top: 12px;
+  float: left;
+  font-family: Gabriela, serif;
+  font-size: 40px;
+  line-height: 38px;
+}

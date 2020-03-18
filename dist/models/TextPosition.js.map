@@ -1,0 +1,1 @@
+{"version":3,"file":"TextPosition.js","sourceRoot":"","sources":["../../src/models/TextPosition.ts"],"names":[],"mappings":";;;AAAA,+DAAgF;AAGhF,IAAqB,YAAY,GAAjC,MAAqB,YAAa,SAAQ,4BAAmB;CAO5D,CAAA;AAJG;IAFC,iCAAU;IACV,6BAAM,CAAC,+BAAQ,CAAC,QAAQ,CAAC;;wCACd;AAGZ;IADC,6BAAM,CAAC,+BAAQ,CAAC,MAAM,CAAC,EAAE,CAAC,CAAC;;kDACP;AANJ,YAAY;IADhC,4BAAK;GACe,YAAY,CAOhC;kBAPoB,YAAY"}

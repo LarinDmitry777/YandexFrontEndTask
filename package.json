@@ -12,7 +12,8 @@
     "lint:css": "stylelint \"src/public/styles/*.css\"",
     "lint-fix:css": "stylelint \"src/public/styles/*.css\" --fix",
     "deps:production": "npm ci --production",
-    "start:docker": "cross-env NODE_PATH=dist/ node dist/"
+    "start:docker": "cross-env NODE_PATH=dist/ node dist/",
+    "deploy": "heroku container:login && heroku container:push web --app larindmitry777-task-2019 && heroku container:release web --app larindmitry777-task-2019"
   },
   "keywords": [],
   "author": "",

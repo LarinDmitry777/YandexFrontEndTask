@@ -33,7 +33,5 @@ export async function renderScene(req: Request, res: Response): Promise<void> {
         scene
     };
 
-    console.log(scene);
-
     res.render('scene', data)
 }

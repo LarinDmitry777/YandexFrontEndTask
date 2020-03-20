@@ -33,7 +33,7 @@ export async function listAdventures(req: Request, res: Response): Promise<void>
         lang,
         staticBasePath,
         title,
-        adventures: adventures
+        adventures
     };
 
     res.render('index', data)

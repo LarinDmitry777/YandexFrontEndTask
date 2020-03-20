@@ -1,6 +1,7 @@
 {{#if adventures.length}}
+    <section>
     {{#each adventures}}
-        <div class="adventure">
+        <article class="adventure">
             <a href="/scenes/{{ firstSceneId }}">
                 <img class="adventure__image" src="{{ ../staticBasePath }}images/adventures/{{imageName}}">
             </a>
@@ -17,6 +18,7 @@
                     {{/each}}
                 </div>
             </div>
-        </div>
+        </article>
     {{/each}}
+    </section>
 {{/if}}

@@ -91,7 +91,9 @@ a {
   padding: 10px 18px;
 }
 
-.hashTag {
+.hash-tag {
+  display: block;
+  font-weight: normal;
   margin-left: 100px;
   margin-top: 46px;
   font-family: Gabriela, fantasy;

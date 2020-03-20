@@ -5,11 +5,11 @@
     <title>{{ title }}</title>
     <meta name="description" content="{{ meta.description }}" />
     <link rel="shortcut icon" href="{{ staticBasePath }}favicon.png" type="image/png" />
-    <link rel="stylesheet" href="/styles/index.css" media="screen" />
+    <link rel="stylesheet" href="{{ staticBasePath }}styles/index.css" media="screen" />
 </head>
 <body>
 {{> header }}
-<div class="hashTag">#{{ hashTag.textRu }}</div>
+<h1 class="hash-tag">#{{ hashTag.textRu }}</h1>
 {{> adventures}}
 </body>
 </html>

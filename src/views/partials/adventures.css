@@ -1,0 +1,59 @@
+.adventure {
+    float: left;
+    margin-top: 50px;
+    margin-left: 99px;
+    min-height: 150px;
+}
+
+.adventure__image {
+    cursor: pointer;
+    float: left;
+    width: 200px;
+    height: 150px;
+}
+
+.adventure__description-column {
+    float: left;
+    display: flex;
+    flex-direction: column;
+    margin-left: 34px;
+}
+
+.adventure__title {
+    color: #000;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: Gabriela, fantasy;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 30px;
+    line-height: 15px;
+}
+
+.adventure__description {
+    margin-top: 34px;
+    font-family: Gabriela, serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 28px;
+    align-items: center;
+    width: 522px;
+}
+
+.adventure__hash-tag-container {
+    display: flex;
+    width: 274px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.adventure__hash-tag {
+    cursor: pointer;
+    font-family: Roboto, sans-serif;
+    color: #fff;
+    background: #b3b3b3;
+    border-radius: 4px;
+    margin: 8px;
+    padding: 10px 18px;
+}

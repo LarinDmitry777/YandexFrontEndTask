@@ -1,7 +1,7 @@
 declare namespace Express {
     interface Request {
         locals: {
-            lang?: string;
+            lang: string;
             meta?: {
                 charset: string;
                 description: string;

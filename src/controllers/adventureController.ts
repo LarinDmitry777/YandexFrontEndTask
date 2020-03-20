@@ -13,6 +13,16 @@ interface PageData {
     adventures: IAdventure[];
 }
 
+export function addDefaultImageToAdventure(adventures: IAdventure[]): IAdventure[] {
+    adventures.forEach(adveture => {
+        if (adveture.imageName === null) {
+            adveture.imageName = 'advent_default.png';
+        }
+    });
+
+    return adventures;
+}
+
 export async function listAdventures(req: Request, res: Response): Promise<void> {
     try {
         const {meta, lang, staticBasePath, title} = req.locals;
@@ -21,13 +31,7 @@ export async function listAdventures(req: Request, res: Response): Promise<void>
             adventure => adventure.firstSceneId !== null
         );
 
-        adventures.forEach(
-            adventure => {
-                if (adventure.imageName === null) {
-                    adventure.imageName = 'advent_default.png'
-                }
-            }
-        );
+        addDefaultImageToAdventure(adventures);
 
         const data: PageData = {
             meta,

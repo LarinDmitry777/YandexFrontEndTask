@@ -5,6 +5,7 @@ import {
     IAdventureWithHashTags, IHashTag
 } from "../dbAdapter";
 import {error404} from "./errors";
+import {addDefaultImageToAdventure} from "./adventureController";
 
 interface PageData {
     lang?: string;
@@ -32,13 +33,7 @@ export async function listAdventuresByHashTag(req: Request, res: Response): Prom
 
         const adventures = await getAdventuresByHashTag(hashTagTextEn);
 
-        adventures.forEach(
-            adventure => {
-                if (adventure.imageName === null) {
-                    adventure.imageName = 'advent_default.png'
-                }
-            }
-        );
+        addDefaultImageToAdventure(adventures);
 
         const data: PageData = {
             meta,

@@ -1,6 +1,6 @@
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {getSceneById, IScene} from "../dbAdapter";
-import {error404} from "./errors";
+import {PageError} from "./errors";
 
 
 interface PageData {
@@ -14,7 +14,7 @@ interface PageData {
     scene: IScene;
 }
 
-export async function renderScene(req: Request, res: Response): Promise<void> {
+export async function renderScene(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const {meta, lang, staticBasePath, title} = req.locals;
 
@@ -22,8 +22,7 @@ export async function renderScene(req: Request, res: Response): Promise<void> {
         const scene: IScene | undefined = await getSceneById(sceneId);
 
         if (scene === undefined) {
-            error404(req, res);
-            return;
+            throw new PageError('404');
         }
 
         const data: PageData = {
@@ -37,6 +36,6 @@ export async function renderScene(req: Request, res: Response): Promise<void> {
         res.render('scene', data)
     } catch (e) {
         console.error(e);
-        res.sendStatus(500);
+        next(e);
     }
 }

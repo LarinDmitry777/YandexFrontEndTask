@@ -1,10 +1,10 @@
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {
     getAdventuresByHashTag,
     getHashTagByEnText,
     IAdventureWithHashTags, IHashTag
 } from "../dbAdapter";
-import {error404} from "./errors";
+import {PageError} from "./errors";
 import {addDefaultImageToAdventure} from "./adventureController";
 
 interface PageData {
@@ -19,7 +19,7 @@ interface PageData {
     hashTag: IHashTag;
 }
 
-export async function listAdventuresByHashTag(req: Request, res: Response): Promise<void> {
+export async function listAdventuresByHashTag(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const {meta, lang, staticBasePath, title} = req.locals;
 
@@ -27,8 +27,7 @@ export async function listAdventuresByHashTag(req: Request, res: Response): Prom
 
         const hashTag = await getHashTagByEnText(hashTagTextEn);
         if (hashTag === undefined) {
-            error404(req, res);
-            return;
+            throw new PageError('404');
         }
 
         const adventures = await getAdventuresByHashTag(hashTagTextEn);
@@ -47,6 +46,6 @@ export async function listAdventuresByHashTag(req: Request, res: Response): Prom
         res.render('hashTag', data)
     } catch (e) {
         console.error(e);
-        res.sendStatus(500);
+        next(e);
     }
 }

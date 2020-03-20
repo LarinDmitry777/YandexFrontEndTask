@@ -1,6 +1,6 @@
-import {Application} from 'express';
+import {Application, Request, Response} from 'express';
 
-import {error404} from './controllers/errors';
+import {processError404, processError500} from './controllers/errors';
 import {listAdventures} from "./controllers/adventureController";
 import {listAdventuresByHashTag} from "./controllers/hashTagsController";
 import {renderScene} from "./controllers/sceneController";
@@ -11,5 +11,10 @@ export default (app: Application): void => {
     app.get('/hashtags/:hashTagTextEn', listAdventuresByHashTag);
     app.get('/scenes/:sceneId', renderScene);
 
-    app.all('*', error404);
+    app.use(processError404);
+    app.use(processError500);
+
+    app.all('*', (_req: Request, res: Response) => {
+        res.sendStatus(404);
+    });
 }

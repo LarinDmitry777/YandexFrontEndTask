@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {getAdventuresWithHashTags, IAdventure, IAdventureWithHashTags} from "../dbAdapter";
 
 
@@ -23,7 +23,7 @@ export function addDefaultImageToAdventure(adventures: IAdventure[]): IAdventure
     return adventures;
 }
 
-export async function listAdventures(req: Request, res: Response): Promise<void> {
+export async function listAdventures(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const {meta, lang, staticBasePath, title} = req.locals;
 
@@ -43,7 +43,6 @@ export async function listAdventures(req: Request, res: Response): Promise<void>
 
         res.render('index', data)
     } catch (e) {
-        console.error(e);
-        res.sendStatus(500);
+        next(e)
     }
 }

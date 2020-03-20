@@ -14,27 +14,32 @@ interface PageData {
 }
 
 export async function listAdventures(req: Request, res: Response): Promise<void> {
-    const {meta, lang, staticBasePath, title} = req.locals;
+    try {
+        const {meta, lang, staticBasePath, title} = req.locals;
 
-    const adventures: IAdventureWithHashTags[] = (await getAdventuresWithHashTags()).filter(
-        adventure => adventure.firstSceneId !== null
-    );
+        const adventures: IAdventureWithHashTags[] = (await getAdventuresWithHashTags()).filter(
+            adventure => adventure.firstSceneId !== null
+        );
 
-    adventures.forEach(
-        adventure => {
-            if (adventure.imageName === null){
-                adventure.imageName = 'advent_default.png'
+        adventures.forEach(
+            adventure => {
+                if (adventure.imageName === null) {
+                    adventure.imageName = 'advent_default.png'
+                }
             }
-        }
-    );
+        );
 
-    const data: PageData = {
-        meta,
-        lang,
-        staticBasePath,
-        title,
-        adventures
-    };
+        const data: PageData = {
+            meta,
+            lang,
+            staticBasePath,
+            title,
+            adventures
+        };
 
-    res.render('index', data)
+        res.render('index', data)
+    } catch (e) {
+        console.error(e);
+        res.sendStatus(500);
+    }
 }

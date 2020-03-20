@@ -19,34 +19,39 @@ interface PageData {
 }
 
 export async function listAdventuresByHashTag(req: Request, res: Response): Promise<void> {
-    const {meta, lang, staticBasePath, title} = req.locals;
+    try {
+        const {meta, lang, staticBasePath, title} = req.locals;
 
-    const {hashTagTextEn} = req.params;
+        const {hashTagTextEn} = req.params;
 
-    const hashTag = await getHashTagByEnText(hashTagTextEn);
-    if (hashTag === undefined) {
-        error404(req, res);
-        return;
-    }
-
-    const adventures = await getAdventuresByHashTag(hashTagTextEn);
-
-    adventures.forEach(
-        adventure => {
-            if (adventure.imageName === null){
-                adventure.imageName = 'advent_default.png'
-            }
+        const hashTag = await getHashTagByEnText(hashTagTextEn);
+        if (hashTag === undefined) {
+            error404(req, res);
+            return;
         }
-    );
 
-    const data: PageData = {
-        meta,
-        lang,
-        staticBasePath,
-        title,
-        adventures: adventures,
-        hashTag: hashTag
-    };
+        const adventures = await getAdventuresByHashTag(hashTagTextEn);
 
-    res.render('hashTag', data)
+        adventures.forEach(
+            adventure => {
+                if (adventure.imageName === null) {
+                    adventure.imageName = 'advent_default.png'
+                }
+            }
+        );
+
+        const data: PageData = {
+            meta,
+            lang,
+            staticBasePath,
+            title,
+            adventures: adventures,
+            hashTag: hashTag
+        };
+
+        res.render('hashTag', data)
+    } catch (e) {
+        console.error(e);
+        res.sendStatus(500);
+    }
 }

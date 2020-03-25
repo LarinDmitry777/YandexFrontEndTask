@@ -6,15 +6,9 @@ import {
 } from "../dbAdapter";
 import {PageError} from "./errors";
 import {addDefaultImageToAdventure} from "./adventureController";
+import RequestLocals = Express.RequestLocals;
 
-interface PageData {
-    lang?: string;
-    meta?: {
-        charset: string;
-        description: string;
-    };
-    title?: string;
-    staticBasePath?: string;
+interface PageData extends RequestLocals{
     adventures: IAdventureWithHashTags[];
     hashTag: IHashTag;
 }

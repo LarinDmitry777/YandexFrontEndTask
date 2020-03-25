@@ -1,14 +1,9 @@
 import {NextFunction, Request, Response} from 'express';
 import {getAdventuresWithHashTags, IAdventure, IAdventureWithHashTags} from "../dbAdapter";
+import RequestLocals = Express.RequestLocals;
 
 
-interface PageData {
-    lang?: string;
-    meta?: {
-        charset: string;
-        description: string;
-    };
-    title?: string;
+interface PageData extends RequestLocals{
     staticBasePath?: string;
     adventures: IAdventure[];
 }

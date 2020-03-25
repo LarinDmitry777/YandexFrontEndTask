@@ -1,16 +1,10 @@
 import {NextFunction, Request, Response} from 'express';
 import {getSceneById, IScene} from "../dbAdapter";
 import {PageError} from "./errors";
+import RequestLocals = Express.RequestLocals;
 
 
-interface PageData {
-    lang?: string;
-    meta?: {
-        charset: string;
-        description: string;
-    };
-    title?: string;
-    staticBasePath?: string;
+interface PageData extends RequestLocals{
     scene: IScene;
 }
 

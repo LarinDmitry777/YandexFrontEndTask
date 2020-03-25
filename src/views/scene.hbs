@@ -14,22 +14,22 @@
 {{> header }}
 <section class="content">
     {{#if scene.imageName}}
-        <article class="text-wrapper text-wrapper_with-image">
+        <div class="text-wrapper text-wrapper_with-image">
             <div class="text-wrapper__text text-wrapper__text_{{ scene.textPosition }}">
                 {{ breaklines scene.text }}
             </div>
-        </article>
+        </div>
         <img class="image" src="{{ staticBasePath }}images/scenes/{{ scene.imageName }}" alt="">
     {{else}}
-        <article class="text-wrapper text-wrapper_without-image">
+        <div class="text-wrapper text-wrapper_without-image">
             <div class="text-wrapper__text text-wrapper__text_{{ scene.textPosition }}">
                 {{ breaklines scene.text }}
             </div>
-        </article>
+        </div>
     {{/if}}
 
     {{#if scene.achievements.length}}
-        <article class="achievements_list">
+        <div class="achievements_list">
         {{#each scene.achievements}}
             <div class="achievement">
                 <img class="achievement__image" src="{{ ../staticBasePath }}images/achievements/{{imageName}}" alt="">
@@ -37,16 +37,16 @@
                 <div class="achievement__name">{{text}}</div>
             </div>
         {{/each}}
-        </article>
+        </div>
     {{/if}}
     {{#if scene.actions.length}}
-        <article class="action-list">
+        <div class="action-list">
             {{#each scene.actions}}
                 <a class="action-list__action" href="/quests/{{ adventureUrl }}/{{ nextSceneId }}">
                     {{ text }}
                 </a>
             {{/each}}
-        </article>
+        </div>
     {{else}}
         <div class="action-list">
             <a class="action-list__action" href="/quests/{{ scene.adventureUrl }}/1">Начать заново</a>

@@ -6,6 +6,7 @@
 }
 
 .adventure__image {
+    display: inline-block;
     cursor: pointer;
     float: left;
     width: 200px;

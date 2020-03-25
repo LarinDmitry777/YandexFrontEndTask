@@ -1,11 +1,23 @@
 import {NextFunction, Request, Response} from 'express';
 import {getAdventuresWithHashTags, IAdventure, isAdventureHasFirstScene} from "../dbAdapter";
 import RequestLocals = Express.RequestLocals;
+import {PageError} from "./errors";
 
 
 interface PageData extends RequestLocals{
     staticBasePath?: string;
     adventures: IAdventure[];
+}
+
+export async function getAdventuresWithFirstScenes(adventures: IAdventure[]): Promise<IAdventure[]>{
+    const result: IAdventure[] = [];
+    for (const adventure of adventures) {
+        if (await isAdventureHasFirstScene(adventure.urlText)) {
+            result.push(adventure);
+        }
+    }
+
+    return result;
 }
 
 export function addDefaultImageToAdventure(adventures: IAdventure[]): IAdventure[] {
@@ -24,13 +36,7 @@ export async function listAdventures(req: Request, res: Response, next: NextFunc
 
         const adventures = await getAdventuresWithHashTags();
 
-        const adventuresWithFirstScene: IAdventure[] = [];
-
-        for (const adventure of adventures) {
-            if (await isAdventureHasFirstScene(adventure.urlText)) {
-                adventuresWithFirstScene.push(adventure);
-            }
-        }
+        const adventuresWithFirstScene: IAdventure[] = await getAdventuresWithFirstScenes(adventures);
 
         addDefaultImageToAdventure(adventuresWithFirstScene);
 
@@ -44,6 +50,10 @@ export async function listAdventures(req: Request, res: Response, next: NextFunc
 
         res.render('index', data)
     } catch (e) {
-        next(e)
+        if (e instanceof PageError){
+            next(e);
+        } else {
+            next(new PageError('500'));
+        }
     }
 }

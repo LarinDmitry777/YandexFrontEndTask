@@ -249,13 +249,22 @@ export async function getSceneByIdAndUrl(sceneId: number, adventureUrl: string):
 }
 
 export async function isAdventureHasFirstScene(adventureUrl: string): Promise<boolean> {
-    const s = await Scene.findOne({
+    const firstScene = await Scene.findOne({
         where: {
             adventureUrl,
             sceneId: 1
         }
     });
 
-    return s != null;
+    return firstScene != null;
 }
 
+export async function getAdventureName(adventureUrl: string): Promise<string> {
+    const adventure: IAdventure | null = (await Adventure.findOne({
+        where: {
+            urlText: adventureUrl
+        }
+    }));
+
+    return adventure === null ? '' : adventure.name;
+}

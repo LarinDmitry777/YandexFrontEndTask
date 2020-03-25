@@ -1,11 +1,11 @@
 import {NextFunction, Request, Response} from 'express';
 import {
     getAdventuresByHashTag,
-    getHashTagByEnText,
+    getHashTagByEnText, IAdventure,
     IAdventureWithHashTags, IHashTag
 } from "../dbAdapter";
 import {PageError} from "./errors";
-import {addDefaultImageToAdventure} from "./adventureController";
+import {addDefaultImageToAdventure, getAdventuresWithFirstScenes} from "./adventureController";
 import RequestLocals = Express.RequestLocals;
 
 interface PageData extends RequestLocals{
@@ -26,6 +26,8 @@ export async function listAdventuresByHashTag(req: Request, res: Response, next:
 
         const adventures = await getAdventuresByHashTag(hashTagTextEn);
 
+        const adventuresWithFirstScene: IAdventure[] = await getAdventuresWithFirstScenes(adventures);
+
         addDefaultImageToAdventure(adventures);
 
         const data: PageData = {
@@ -33,12 +35,16 @@ export async function listAdventuresByHashTag(req: Request, res: Response, next:
             lang,
             staticBasePath,
             title,
-            adventures: adventures,
-            hashTag: hashTag
+            adventures: adventuresWithFirstScene,
+            hashTag
         };
 
         res.render('hashTag', data)
     } catch (e) {
-        next(e);
+        if (e instanceof PageError){
+            next(e);
+        } else {
+            next(new PageError('500'));
+        }
     }
 }

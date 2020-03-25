@@ -214,6 +214,8 @@ async function getActions(sceneId: number): Promise<IAction[]> {
 }
 
 export async function getSceneById(sceneId: number): Promise<IScene | undefined> {
+    const maxPositionId = 4;
+    const minPositionId = 1;
     const sceneData = await Scene.findOne({
         where: {
             id: sceneId
@@ -222,7 +224,9 @@ export async function getSceneById(sceneId: number): Promise<IScene | undefined>
     if (sceneData === null) {
         return undefined;
     }
-    if (sceneData.textPositionId === undefined || sceneData.textPositionId > 9 || sceneData.textPositionId < 1) {
+    if (sceneData.textPositionId === undefined ||
+        sceneData.textPositionId > maxPositionId ||
+        sceneData.textPositionId < minPositionId) {
         sceneData.textPositionId = 1;
     }
 

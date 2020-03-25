@@ -13,6 +13,7 @@ import AdventureToHashTag from "./models/AdventureToHashTag";
 import SceneToAchievements from "./models/SceneToAchievement"
 import {Op} from "sequelize";
 import SceneToAchievement from "./models/SceneToAchievement";
+import bdKeys from "./bdKeys.json"
 
 export interface IAdventure {
     id: number;
@@ -61,15 +62,18 @@ export interface IAction {
 }
 
 export function initDb(): void {
-    const sequelizeOptions: SequelizeOptions = {
-        host: 'drona.db.elephantsql.com',
-        port: 5432,
-        username: 'ztcxcfke',
-        password: 'Ayn-d22g6DpPskGc_yekOQlf36p2Cqas',
-        database: 'ztcxcfke',
-        dialect: 'postgres',
-        models: [Achievement, Scene, TextPosition, HashTag, Action, Adventure, AdventureToHashTag, SceneToAchievements]
-    };
+    const sequelizeOptions: SequelizeOptions = bdKeys;
+    sequelizeOptions.dialect = 'postgres';
+    sequelizeOptions.models = [
+        Achievement,
+        Scene,
+        TextPosition,
+        HashTag,
+        Action,
+        Adventure,
+        AdventureToHashTag,
+        SceneToAchievements
+    ];
     new Sequelize(sequelizeOptions);
 }
 

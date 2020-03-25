@@ -20,7 +20,7 @@ export interface IAdventure {
     imageName?: string;
     description?: string;
     name: string;
-    firstSceneId?: number;
+    urlText: string;
 }
 
 export interface IHashTag {
@@ -29,17 +29,13 @@ export interface IHashTag {
     textEn: string;
 }
 
-export interface IAdventureWithHashTags {
-    id: number;
-    imageName?: string;
-    description?: string;
-    name: string;
-    firstSceneId?: number;
+export interface IAdventureWithHashTags extends IAdventure{
     hashTags?: IHashTag[];
 }
 
 export interface IScene {
-    id: number;
+    sceneId: number;
+    adventureUrl: string;
     text?: string;
     imageName?: string;
     textPosition: string;
@@ -55,6 +51,7 @@ export interface IAchievement {
 }
 
 export interface IAction {
+    adventureUrl: string;
     id: number;
     sceneId: number;
     nextSceneId: number;
@@ -120,7 +117,7 @@ async function getAdventures(adventuresIds?: number[]): Promise<IAdventure[]> {
             imageName: adventure.imageName,
             description: adventure.description,
             name: adventure.name,
-            firstSceneId: adventure.firstSceneId
+            urlText: adventure.urlText
         }
     });
 }
@@ -169,19 +166,19 @@ export async function getAdventuresByHashTag(hashTagTextEn: string): Promise<IAd
     return  await getAdventuresWithHashTags(adventuresIds);
 }
 
-async function getAchievements(sceneId: number): Promise<IAchievement[]> {
+async function getAchievements(sceneId: number, adventureUrl: string): Promise<IAchievement[]> {
     const achievementsIds: number[] = (await SceneToAchievement.findAll({
         where: {
-            'sceneId': sceneId
+            adventureUrl,
+            sceneId
         }
     })).map(data => data.achievementId);
-    console.log('achievements ids: ', achievementsIds);
 
     if (achievementsIds.length == 0) {
         return [];
     }
 
-    const result = (await Achievement.findAll({
+    return (await Achievement.findAll({
         where: {
             id: {
                 [Op.or]: achievementsIds
@@ -194,17 +191,18 @@ async function getAchievements(sceneId: number): Promise<IAchievement[]> {
             id: achievementObject.id
         }
     });
-    console.log(result);
-    return result;
+
 }
 
-async function getActions(sceneId: number): Promise<IAction[]> {
+async function getActions(sceneId: number, adventureUrl: string): Promise<IAction[]> {
     return (await Action.findAll({
         where: {
+            adventureUrl,
             sceneId: sceneId
         }
     })).map(obj => {
         return {
+            adventureUrl: obj.adventureUrl,
             text: obj.text,
             nextSceneId: obj.nextSceneId,
             sceneId: obj.sceneId,
@@ -213,12 +211,13 @@ async function getActions(sceneId: number): Promise<IAction[]> {
     });
 }
 
-export async function getSceneById(sceneId: number): Promise<IScene | undefined> {
+export async function getSceneByIdAndUrl(sceneId: number, adventureUrl: string): Promise<IScene | undefined> {
     const maxPositionId = 4;
     const minPositionId = 1;
     const sceneData = await Scene.findOne({
         where: {
-            id: sceneId
+            sceneId,
+            adventureUrl
         }
     });
     if (sceneData === null) {
@@ -238,13 +237,25 @@ export async function getSceneById(sceneId: number): Promise<IScene | undefined>
 
 
     return  {
+        adventureUrl: sceneData.adventureUrl,
         text: sceneData.text,
         imageName: sceneData.imageName,
-        id: sceneData.id,
+        sceneId: sceneData.sceneId,
         textPosition: (textPosition === undefined) ? 'topLeft' : textPosition,
-        achievements: await getAchievements(sceneData.id),
-        actions: await getActions(sceneData.id),
+        achievements: await getAchievements(sceneData.sceneId, sceneData.adventureUrl),
+        actions: await getActions(sceneData.sceneId, sceneData.adventureUrl),
         firstSceneId: sceneData.firstSceneId
     };
+}
+
+export async function isAdventureHasFirstScene(adventureUrl: string): Promise<boolean> {
+    const s = await Scene.findOne({
+        where: {
+            adventureUrl,
+            sceneId: 1
+        }
+    });
+
+    return s != null;
 }
 

@@ -9,6 +9,9 @@ export default class SceneToAchievement extends Model<SceneToAchievement>{
     @Column(DataType.INTEGER)
     sceneId!: number;
 
+    @Column(DataType.STRING)
+    adventureUrl!: string;
+
     @ForeignKey(() => Achievement)
     @AllowNull(false)
     @Column(DataType.INTEGER)

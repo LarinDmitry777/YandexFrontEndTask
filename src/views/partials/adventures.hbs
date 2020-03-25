@@ -2,11 +2,11 @@
     <section>
     {{#each adventures}}
         <article class="adventure">
-            <a href="/scenes/{{ firstSceneId }}">
+            <a href="/quests/{{ urlText }}/1">
                 <img class="adventure__image" src="{{ ../staticBasePath }}images/adventures/{{imageName}}" alt="">
             </a>
             <div class="adventure__description-column">
-                <a href="/scenes/{{ firstSceneId }}">
+                <a href="/quests/{{ urlText }}/1">
                     <div class="adventure__title">{{ name }}</div>
                 </a>
                 {{#if description}}

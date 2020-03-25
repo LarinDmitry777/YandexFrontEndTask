@@ -3,14 +3,11 @@ import {
     AutoIncrement,
     Column,
     DataType,
-    ForeignKey,
     Model,
     PrimaryKey,
     Table,
     Unique
 } from "sequelize-typescript";
-
-import Scene from "./Scene";
 
 @Table
 export default class Adventure extends Model<Adventure>{
@@ -18,6 +15,10 @@ export default class Adventure extends Model<Adventure>{
     @PrimaryKey
     @Column(DataType.INTEGER)
     id!: number;
+
+    @Unique
+    @Column(DataType.STRING(50))
+    urlText!: string;
 
     @AllowNull(true)
     @Column(DataType.STRING(50))
@@ -29,10 +30,4 @@ export default class Adventure extends Model<Adventure>{
     @Unique
     @Column(DataType.STRING(50))
     name!: string;
-
-    @ForeignKey(() => Scene)
-    @AllowNull(true)
-    @Column(DataType.INTEGER)
-    firstSceneId!: number;
-
 }

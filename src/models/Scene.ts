@@ -1,11 +1,12 @@
-import {AllowNull, AutoIncrement, Column, DataType, Model, PrimaryKey, Table} from "sequelize-typescript";
+import {AllowNull, Column, DataType, Model, Table} from "sequelize-typescript";
 
 @Table
 export default class Scene extends Model<Scene>{
-    @AutoIncrement
-    @PrimaryKey
     @Column(DataType.INTEGER)
-    id!: number;
+    sceneId!: number;
+
+    @Column(DataType.STRING)
+    adventureUrl!: string;
 
     @AllowNull(true)
     @Column(DataType.STRING(400))

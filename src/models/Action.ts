@@ -8,6 +8,9 @@ export default class Action extends Model<Action> {
     @Column(DataType.INTEGER)
     id!: number;
 
+    @Column(DataType.STRING(50))
+    adventureUrl!: string;
+
     @ForeignKey(() => Scene)
     @AllowNull(false)
     @Column(DataType.INTEGER)

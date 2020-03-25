@@ -42,14 +42,14 @@
     {{#if scene.actions.length}}
         <article class="action-list">
             {{#each scene.actions}}
-                <a class="action-list__action" href="/scenes/{{ nextSceneId }}">
+                <a class="action-list__action" href="/quests/{{ adventureUrl }}/{{ nextSceneId }}">
                     {{ text }}
                 </a>
             {{/each}}
         </article>
     {{else}}
         <div class="action-list">
-            <a class="action-list__action" href="/scenes/{{scene.firstSceneId}}">Начать заново</a>
+            <a class="action-list__action" href="/quests/{{ scene.adventureUrl }}/1">Начать заново</a>
         </div>
     {{/if}}
 </section>

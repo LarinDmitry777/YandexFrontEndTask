@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
-import {getAdventuresWithHashTags, IAdventure, IAdventureWithHashTags} from "../dbAdapter";
+import {getAdventuresWithHashTags, IAdventure, isAdventureHasFirstScene} from "../dbAdapter";
 import RequestLocals = Express.RequestLocals;
 
 
@@ -22,18 +22,24 @@ export async function listAdventures(req: Request, res: Response, next: NextFunc
     try {
         const {meta, lang, staticBasePath, title} = req.locals;
 
-        const adventures: IAdventureWithHashTags[] = (await getAdventuresWithHashTags()).filter(
-            adventure => adventure.firstSceneId !== null
-        );
+        const adventures = await getAdventuresWithHashTags();
 
-        addDefaultImageToAdventure(adventures);
+        const adventuresWithFirstScene: IAdventure[] = [];
+
+        for (const adventure of adventures) {
+            if (await isAdventureHasFirstScene(adventure.urlText)) {
+                adventuresWithFirstScene.push(adventure);
+            }
+        }
+
+        addDefaultImageToAdventure(adventuresWithFirstScene);
 
         const data: PageData = {
             meta,
             lang,
             staticBasePath,
             title,
-            adventures
+            adventures: adventuresWithFirstScene
         };
 
         res.render('index', data)

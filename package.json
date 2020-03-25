@@ -8,7 +8,7 @@
     "start": "npm run build && node dist/index.js",
     "build:static": "./scripts/build-static.sh",
     "lint": "npm run lint:ts && npm run lint:css",
-    "lint:ts": "eslint \"src/controllers/**\" \"src/middlewares/**\" \"src/models/**\" src/dbAdapter.ts src/index.ts src/routes.ts",
+    "lint:ts": "eslint \"src/**ts\"",
     "lint:css": "stylelint \"src/public/styles/*.css\"",
     "lint-fix:css": "stylelint \"src/public/styles/*.css\" --fix",
     "deps:production": "npm ci --production",

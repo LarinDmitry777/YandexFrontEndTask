@@ -39,7 +39,6 @@ export async function listAdventuresByHashTag(req: Request, res: Response, next:
 
         res.render('hashTag', data)
     } catch (e) {
-        console.error(e);
         next(e);
     }
 }

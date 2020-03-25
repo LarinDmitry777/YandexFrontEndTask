@@ -29,7 +29,6 @@ export async function renderScene(req: Request, res: Response, next: NextFunctio
 
         res.render('scene', data)
     } catch (e) {
-        console.error(e);
         next(e);
     }
 }

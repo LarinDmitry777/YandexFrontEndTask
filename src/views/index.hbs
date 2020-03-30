@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="{{ meta.charset }}" />
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ meta.description }}" />
+    <link rel="shortcut icon" href="{{ staticBasePath }}styles/favicon.png" type="image/png" />
+    <link rel="stylesheet" href="{{ staticBasePath }}bundles/common.css" media="screen" />
+    <link rel="stylesheet" href="{{ staticBasePath }}bundles/adventures.css" media="screen" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="prefetch" href="{{ staticBasePath }}styles/scene.css" as="style" />
+
+</head>
+<body>
+    {{> header }}
+    {{> adventures }}
+</body>
+</html>

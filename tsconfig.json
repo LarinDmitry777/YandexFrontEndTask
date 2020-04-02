@@ -8,7 +8,10 @@
     "baseUrl": "src/",
 
     "target": "es2019",
-    "lib": ["es2019"],
+    "lib": [
+      "es2019",
+      "dom"
+    ],
     "module": "commonjs",
     "resolveJsonModule": true,
     "sourceMap": true,

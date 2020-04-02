@@ -5,7 +5,7 @@ import {
     IAdventureWithHashTags, IHashTag
 } from "../dbAdapter";
 import {PageError} from "./errors";
-import {addDefaultImageToAdventure, getAdventuresWithFirstScenes} from "./adventureController";
+import {addDefaultImageToAdventure, filterAdventuresWithFirstScenes} from "./adventureController";
 import RequestLocals = Express.RequestLocals;
 
 interface PageData extends RequestLocals{
@@ -26,7 +26,7 @@ export async function listAdventuresByHashTag(req: Request, res: Response, next:
 
         const adventures = await getAdventuresByHashTag(hashTagTextEn);
 
-        const adventuresWithFirstScene: IAdventure[] = await getAdventuresWithFirstScenes(adventures);
+        const adventuresWithFirstScene: IAdventure[] = await filterAdventuresWithFirstScenes(adventures);
 
         addDefaultImageToAdventure(adventures);
 

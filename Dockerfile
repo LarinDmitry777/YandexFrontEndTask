@@ -5,7 +5,7 @@ FROM node:13
 COPY config /config
 COPY dist /dist
 COPY package.json /
-COPY package-lock.json /
+COPY package-lock.json1 /
 
 
 RUN npm run deps:production

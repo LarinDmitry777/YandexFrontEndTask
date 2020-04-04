@@ -201,11 +201,12 @@ function loadAndRenderAdventure(adventureId: number, isWantRenderNextIfEmpty = t
                 });
             }
         })
-        .catch(_ => {
+        .catch(error => {
             reloadsCount += 1;
-            if (reloadsCount < 3) {
+            if (reloadsCount < 5) {
                 loadAndRenderAdventure(adventureId)
             } else {
+                console.error(error);
                 updateLoadingAnimation(-1);
                 alert('Что-то пошло не так. Перезагрузите страницу.')
             }

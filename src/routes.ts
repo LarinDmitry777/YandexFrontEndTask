@@ -1,9 +1,10 @@
 import {Application, Request, Response} from 'express';
 
 import {processError404, processError500} from './controllers/errors';
-import {getJsonAdventures, listAdventures} from "./controllers/adventureController";
+import {listAdventures} from "./controllers/adventureController";
 import {listAdventuresByHashTag} from "./controllers/hashTagsController";
 import {renderScene} from "./controllers/sceneController";
+import {getJsonAdventures} from "./controllers/apiController";
 
 export default (app: Application): void => {
     app.get('/', listAdventures);
@@ -13,6 +14,7 @@ export default (app: Application): void => {
     app.get('/hashtags/:hashTagTextEn', listAdventuresByHashTag);
 
     app.get('/api/adventures', getJsonAdventures);
+    app.get('/api/adventures/:number', getJsonAdventures);
 
     app.all('*', processError404);
     app.all('*', processError500);

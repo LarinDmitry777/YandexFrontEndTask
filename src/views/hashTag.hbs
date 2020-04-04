@@ -7,10 +7,12 @@
     <link rel="shortcut icon" href="{{ staticBasePath }}favicon.png" type="image/png" />
     <link rel="stylesheet" href="{{ staticBasePath }}bundles/common.css" media="screen" />
     <link rel="stylesheet" href="{{ staticBasePath }}bundles/hashTag.css" media="screen" />
+    <script defer src="{{ staticBasePath }}scripts/index.js"></script>
 </head>
 <body>
 {{> header }}
 <h1 class="hash-tag">#{{ hashTag.textRu }}</h1>
-{{> adventures}}
+<section class="adventures"></section>
+<img class="load-animation" src="https://bit.ly/3aQELtX" alt="">
 </body>
 </html>

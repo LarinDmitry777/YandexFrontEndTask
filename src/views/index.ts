@@ -1,16 +1,45 @@
-interface HashTag {
-    textEn: string;
-    textRu: string;
-}
+/*
+Тут происходит дублирование интерфейсов.
+Я не знаю как это исправить, потому что если я буду использовать импорт,
+то в js файле после компиляции появится строка
+
+Object.defineProperty(exports, "__esModule", { value: true });
+
+Эта строка крашит браузер, так как видимо это что-то из nodeJs, а не браузера
+Все решения в интернете говорят о том, что в tsconfig.json нужно убрать строку
+"module": "commonjs",
+
+Но тогда это поломает серверную часть.
+
+Возможно есть какая-то аннотация, которая это чинит, но я её не нашел.
+ */
 
 interface AdventureApiData {
+    id: number;
     name: string;
     adventureUrl: string;
     staticBasePath: string;
     imageName: string;
     description?: string;
-    hashTags: HashTag[];
+    hashTags: IHashTag[];
+    adventuresCount: number;
 }
+
+interface IHashTag {
+    textRu: string;
+    textEn: string;
+}
+
+let lastRenderedAdventureId = 0;
+
+// // Обновляется каждый раз при загрузке Adventure
+let adventuresCount = 100;
+
+const pageHashTag = document
+    .getElementsByClassName('hash-tag')
+    .item(0)
+    ?.textContent
+    ?.slice(1);
 
 function createWrapperWithLink(adventureData: AdventureApiData): HTMLElement {
     const wrapper = document.createElement('a');
@@ -86,7 +115,31 @@ function createDescriptionColumn(adventureData: AdventureApiData): HTMLElement {
 }
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+function showLoadingAnimation(): void {
+    const loadingGif = document.getElementsByClassName('load-animation').item(0);
+    // loadingGif?.setAttribute('hidden', 'hidden');
+    loadingGif?.classList.remove('load-animation_hidden')
+}
+
+function hideLoadingAnimation(): void {
+    const loadingGif = document.getElementsByClassName('load-animation').item(0);
+    // loadingGif?.setAttribute('hidden', 'hidden');
+    loadingGif?.classList.add('load-animation_hidden')
+}
+
+let loadingAdventuresCount = 0;
+
+function updateLoadingAnimation(loadingCountDelta: number): void {
+    loadingAdventuresCount += loadingCountDelta;
+    console.log(loadingAdventuresCount);
+    if (loadingAdventuresCount === 0) {
+        hideLoadingAnimation();
+    } else {
+        showLoadingAnimation();
+    }
+}
+
 function renderAdventure(adventureData: AdventureApiData): void {
     const adventure = document.createElement('article');
     adventure.classList.add('adventure');
@@ -101,12 +154,87 @@ function renderAdventure(adventureData: AdventureApiData): void {
     }
 }
 
-function renderAdventures(): void {
-    fetch('http://localhost:3000/api/adventures')
-        .then((value): Promise<AdventureApiData[]> => value.json())
+function checkHashTag(hashTags: IHashTag[]): boolean {
+    if (pageHashTag === null || pageHashTag === undefined) {
+        return true;
+    }
+
+    for (const hashTag of hashTags) {
+        if (hashTag.textRu === pageHashTag) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function renderNextAdventure(): void {
+    updateLoadingAnimation(1);
+    if (lastRenderedAdventureId > adventuresCount) {
+        updateLoadingAnimation(-1);
+        return
+    }
+    lastRenderedAdventureId++;
+
+    loadAndRenderAdventure(lastRenderedAdventureId);
+}
+
+function loadAndRenderAdventure(adventureId: number, isWantRenderNextIfEmpty = true): void {
+    let reloadsCount = 0;
+
+    fetch(`http://localhost:3000/api/adventures/${adventureId}`)
+        .then((value): Promise<AdventureApiData[]> => {
+            return value.json()
+        })
         .then(adventures => {
-            adventures.forEach(adventure => {renderAdventure(adventure)});
+            adventuresCount = adventures[0] === undefined ? adventuresCount : adventures[0].adventuresCount;
+
+            if (adventures.length === 0 || !checkHashTag(adventures[0].hashTags)) {
+                updateLoadingAnimation(-1);
+                if (isWantRenderNextIfEmpty) {
+                    renderNextAdventure();
+                }
+            } else {
+                adventures.forEach(adventure => {
+                    updateLoadingAnimation(-1);
+                    renderAdventure(adventure)
+                });
+            }
+        })
+        .catch(_ => {
+            reloadsCount += 1;
+            if (reloadsCount < 3) {
+                loadAndRenderAdventure(adventureId)
+            } else {
+                updateLoadingAnimation(-1);
+                alert('Что-то пошло не так. Перезагрузите страницу.')
+            }
         });
 }
 
-renderAdventures();
+function renderAdventures(count: number): void {
+    for (let i = 0; i < count; i++) {
+        renderNextAdventure();
+    }
+}
+
+function createObserver(): void {
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0
+    };
+
+    const callback = function(): void {
+        if (loadingAdventuresCount === 0) {
+            renderAdventures(5);
+        }
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+
+    const target = document.getElementsByClassName('load-animation').item(0);
+    observer.observe(target!);
+}
+
+createObserver();

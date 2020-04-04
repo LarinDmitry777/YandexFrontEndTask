@@ -1,15 +1,15 @@
 import {NextFunction, Request, Response} from 'express';
 import {
-    getAdventuresByHashTag,
-    getHashTagByEnText, IAdventure,
-    IAdventureWithHashTags, IHashTag
+    getAdventuresByHashTag, getHashTagByEnText,
+    IAdventure,
+    IHashTag
 } from "../dbAdapter";
 import {PageError} from "./errors";
 import {addDefaultImageToAdventure, filterAdventuresWithFirstScenes} from "./adventureController";
 import RequestLocals = Express.RequestLocals;
 
 interface PageData extends RequestLocals{
-    adventures: IAdventureWithHashTags[];
+    adventures: IAdventure[];
     hashTag: IHashTag;
 }
 

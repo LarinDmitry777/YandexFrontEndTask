@@ -14,6 +14,7 @@ import SceneToAchievements from "./models/SceneToAchievement"
 import {Op} from "sequelize";
 import SceneToAchievement from "./models/SceneToAchievement";
 import bdKeys from "./bdKeys.json"
+import HashTagView from "./models/HastTagView";
 
 export interface IAdventure {
     id: number;
@@ -21,16 +22,16 @@ export interface IAdventure {
     description?: string;
     name: string;
     urlText: string;
+    hashTags?: IHashTag[];
 }
 
 export interface IHashTag {
-    id: number;
     textRu: string;
     textEn: string;
 }
 
-export interface IAdventureWithHashTags extends IAdventure{
-    hashTags?: IHashTag[];
+interface IHashTagWithAdventureId extends IHashTag{
+    adventureId: number;
 }
 
 export interface IScene {
@@ -69,32 +70,58 @@ export function initDb(): void {
         Action,
         Adventure,
         AdventureToHashTag,
-        SceneToAchievements
+        SceneToAchievements,
+        HashTagView
     ];
     new Sequelize(sequelizeOptions);
 }
 
 async function getHashTags(adventureId: number): Promise<IHashTag[]> {
-    const hashTagIds: number[] = (await AdventureToHashTag.findAll({
-        attributes: ['hashTagId'],
-        where: {'adventureId': adventureId}
-    })).map(hashTagObject => hashTagObject.hashTagId);
+    return (await HashTagView.findAll({
+        where: {
+            'adventureId': adventureId
+        }
+    })).map(hashTagObject => {
+        return {
+            textEn: hashTagObject.textEn,
+            textRu: hashTagObject.textRu
+        }
+    });
+}
 
-    if (hashTagIds.length === 0) {
-        return [];
+export async function getHashTagByEnText(hashTagTextEn: string): Promise<IHashTag> {
+    const hashTag = await HashTag.findOne({
+        where: {
+            textEn: hashTagTextEn
+        }
+    });
+
+    if (hashTag == null) {
+        return {
+            textEn: '',
+            textRu: ''
+        };
     }
 
-    return (await HashTag.findAll({
+    return {
+        textRu: hashTag.textRu,
+        textEn: hashTag.textEn
+    }
+}
+
+async function getManyHashTags(adventureIds: number[]): Promise<IHashTagWithAdventureId[]> {
+    console.log('here');
+    return (await HashTagView.findAll({
         where: {
-            id: {
-                [Op.or]: hashTagIds
+            adventureId: {
+                [Op.or]: adventureIds
             }
         }
     })).map(hashTagObject => {
         return {
-            id: hashTagObject.id,
+            textRu: hashTagObject.textRu,
             textEn: hashTagObject.textEn,
-            textRu: hashTagObject.textRu
+            adventureId: hashTagObject.adventureId
         }
     });
 }
@@ -109,7 +136,7 @@ async function getAdventures(adventuresIds?: number[]): Promise<IAdventure[]> {
         }
     }
 
-    return (await Adventure.findAll({
+    const adventures: IAdventure[] = (await Adventure.findAll({
         where: searchOptions
     })).map((adventure: Adventure) => {
         return {
@@ -117,13 +144,25 @@ async function getAdventures(adventuresIds?: number[]): Promise<IAdventure[]> {
             imageName: adventure.imageName,
             description: adventure.description,
             name: adventure.name,
-            urlText: adventure.urlText
+            urlText: adventure.urlText,
+            hashTags: []
         }
     });
+
+    const adventureIds: number[] = adventures.map(adventure => adventure.id);
+    const hashTags: IHashTagWithAdventureId[] = await getManyHashTags(adventureIds);
+
+    hashTags.forEach(hashTag => {
+        const adventure = adventures.find(x => x.id === hashTag.adventureId);
+        adventure?.hashTags?.push(hashTag);
+    });
+
+    return adventures;
 }
 
+
 export async function getAdventuresWithHashTags(adventuresIds?: number[]): Promise<IAdventure[]> {
-    const adventures: IAdventureWithHashTags[] = await getAdventures(adventuresIds);
+    const adventures: IAdventure[] = await getAdventures(adventuresIds);
 
     for (const adventure of adventures) {
         adventure.hashTags = await getHashTags(adventure.id);
@@ -132,38 +171,14 @@ export async function getAdventuresWithHashTags(adventuresIds?: number[]): Promi
     return adventures;
 }
 
-export async function getHashTagByEnText(hashTagTextEn: string): Promise<IHashTag | undefined> {
-    const hashTagObject = (await HashTag.findOne({
+export async function getAdventuresByHashTag(hashTagTextEn: string): Promise<IAdventure[]> {
+    const adventureIds: number[] = (await HashTagView.findAll({
         where: {
             textEn: hashTagTextEn
         }
-    }));
-    console.log(hashTagObject);
-    if (hashTagObject == undefined) {
-        return undefined;
-    }
+    })).map(hashTagObject => hashTagObject.adventureId);
 
-    return {
-        id: hashTagObject.id,
-        textEn: hashTagObject.textEn,
-        textRu: hashTagObject.textRu
-    }
-}
-
-export async function getAdventuresByHashTag(hashTagTextEn: string): Promise<IAdventureWithHashTags[]> {
-    const hashTag = await getHashTagByEnText(hashTagTextEn);
-
-    if (hashTag === undefined){
-        return [];
-    }
-
-    const adventuresIds = (await AdventureToHashTag.findAll({
-        where: {
-            hashTagId: hashTag.id
-        }
-    }))?.map(adventure => adventure.adventureId);
-
-    return  await getAdventuresWithHashTags(adventuresIds);
+    return  await getAdventuresWithHashTags(adventureIds);
 }
 
 async function getAchievements(sceneId: number, adventureUrl: string): Promise<IAchievement[]> {
@@ -267,4 +282,8 @@ export async function getAdventureName(adventureUrl: string): Promise<string> {
     }));
 
     return adventure === null ? '' : adventure.name;
+}
+
+export async function getAdventuresCount(): Promise<number> {
+    return Adventure.count();
 }

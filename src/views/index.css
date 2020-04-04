@@ -8,3 +8,13 @@ body {
 a {
   text-decoration: none;
 }
+
+.load-animation {
+  margin: 200px auto;
+  width: 200px;
+  display: block;
+}
+
+.load-animation_hidden {
+  visibility: hidden;
+}

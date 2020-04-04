@@ -110,7 +110,6 @@ export async function getHashTagByEnText(hashTagTextEn: string): Promise<IHashTa
 }
 
 async function getManyHashTags(adventureIds: number[]): Promise<IHashTagWithAdventureId[]> {
-    console.log('here');
     return (await HashTagView.findAll({
         where: {
             adventureId: {

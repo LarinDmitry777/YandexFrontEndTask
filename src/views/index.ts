@@ -30,6 +30,8 @@ interface IHashTag {
     textEn: string;
 }
 
+const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
+
 let lastRenderedAdventureId = 0;
 
 // // Обновляется каждый раз при загрузке Adventure
@@ -132,7 +134,6 @@ let loadingAdventuresCount = 0;
 
 function updateLoadingAnimation(loadingCountDelta: number): void {
     loadingAdventuresCount += loadingCountDelta;
-    console.log(loadingAdventuresCount);
     if (loadingAdventuresCount === 0) {
         hideLoadingAnimation();
     } else {
@@ -182,7 +183,7 @@ function renderNextAdventure(): void {
 function loadAndRenderAdventure(adventureId: number, isWantRenderNextIfEmpty = true): void {
     let reloadsCount = 0;
 
-    fetch(`http://localhost:3000/api/adventures/${adventureId}`)
+    fetch(`${hostUrl}/api/adventures/${adventureId}`)
         .then((value): Promise<AdventureApiData[]> => {
             return value.json()
         })
@@ -238,4 +239,5 @@ function createObserver(): void {
     observer.observe(target!);
 }
 
+renderAdventures(5);
 createObserver();

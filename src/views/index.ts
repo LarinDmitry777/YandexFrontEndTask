@@ -30,8 +30,7 @@ interface IHashTag {
     textEn: string;
 }
 
-const hostUrl = 'http://localhost:3000';
-// const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
+const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
 
 let adventureToRenderId = 1;
 
@@ -156,7 +155,6 @@ function loadAdventuresPack(): void {
                 renderAdventure(adventure)
             });
             adventureToRenderId += adventures.length;
-            console.log('CurrentValue: ', adventureToRenderId);
         })
         .then(() => {hideLoadingAnimation()})
         .catch(e => console.error(`Request: ${request}\n${e}`));

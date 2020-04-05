@@ -30,12 +30,10 @@ interface IHashTag {
     textEn: string;
 }
 
-const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
+const hostUrl = 'http://localhost:3000';
+// const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
 
-let lastRenderedAdventureId = 0;
-
-// // Обновляется каждый раз при загрузке Adventure
-let adventuresCount = 100;
+let adventureToRenderId = 1;
 
 const pageHashTag = document
     .getElementsByClassName('hash-tag')
@@ -130,17 +128,6 @@ function hideLoadingAnimation(): void {
     loadingGif?.classList.add('load-animation_hidden')
 }
 
-let loadingAdventuresCount = 0;
-
-function updateLoadingAnimation(loadingCountDelta: number): void {
-    loadingAdventuresCount += loadingCountDelta;
-    if (loadingAdventuresCount === 0) {
-        hideLoadingAnimation();
-    } else {
-        showLoadingAnimation();
-    }
-}
-
 function renderAdventure(adventureData: AdventureApiData): void {
     const adventure = document.createElement('article');
     adventure.classList.add('adventure');
@@ -155,70 +142,26 @@ function renderAdventure(adventureData: AdventureApiData): void {
     }
 }
 
-function checkHashTag(hashTags: IHashTag[]): boolean {
-    if (pageHashTag === null || pageHashTag === undefined) {
-        return true;
-    }
+function loadAdventuresPack(): void {
+    const request = pageHashTag === undefined
+        ? `${hostUrl}/api/adventuresPack/${adventureToRenderId}`
+        : `${hostUrl}/api/adventuresPack/${adventureToRenderId}/${pageHashTag}`;
 
-    for (const hashTag of hashTags) {
-        if (hashTag.textRu === pageHashTag) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function renderNextAdventure(): void {
-    updateLoadingAnimation(1);
-    if (lastRenderedAdventureId > adventuresCount) {
-        updateLoadingAnimation(-1);
-        return
-    }
-    lastRenderedAdventureId++;
-
-    loadAndRenderAdventure(lastRenderedAdventureId);
-}
-
-function loadAndRenderAdventure(adventureId: number, isWantRenderNextIfEmpty = true): void {
-    let reloadsCount = 0;
-
-    fetch(`${hostUrl}/api/adventures/${adventureId}`)
+    fetch(request)
         .then((value): Promise<AdventureApiData[]> => {
             return value.json()
         })
         .then(adventures => {
-            adventuresCount = adventures[0] === undefined ? adventuresCount : adventures[0].adventuresCount;
-
-            if (adventures.length === 0 || !checkHashTag(adventures[0].hashTags)) {
-                updateLoadingAnimation(-1);
-                if (isWantRenderNextIfEmpty) {
-                    renderNextAdventure();
-                }
-            } else {
-                adventures.forEach(adventure => {
-                    updateLoadingAnimation(-1);
-                    renderAdventure(adventure)
-                });
-            }
+            adventures.forEach(adventure => {
+                renderAdventure(adventure)
+            });
+            adventureToRenderId += adventures.length;
+            console.log('CurrentValue: ', adventureToRenderId);
         })
-        .catch(error => {
-            reloadsCount += 1;
-            if (reloadsCount < 5) {
-                loadAndRenderAdventure(adventureId)
-            } else {
-                console.error(error);
-                updateLoadingAnimation(-1);
-                alert('Что-то пошло не так. Перезагрузите страницу.')
-            }
-        });
+        .then(() => {hideLoadingAnimation()})
+        .catch(e => console.error(`Request: ${request}\n${e}`));
 }
 
-function renderAdventures(count: number): void {
-    for (let i = 0; i < count; i++) {
-        renderNextAdventure();
-    }
-}
 
 function createObserver(): void {
     const options = {
@@ -228,9 +171,8 @@ function createObserver(): void {
     };
 
     const callback = function(): void {
-        if (loadingAdventuresCount === 0) {
-            renderAdventures(5);
-        }
+        showLoadingAnimation();
+        loadAdventuresPack();
     };
 
     const observer = new IntersectionObserver(callback, options);
@@ -239,5 +181,5 @@ function createObserver(): void {
     observer.observe(target!);
 }
 
-renderAdventures(5);
+
 createObserver();

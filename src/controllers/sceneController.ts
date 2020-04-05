@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
-import {getAdventureName, getSceneByIdAndUrl, IScene} from "../dbAdapter";
+import {getAdventureName, getScene, IScene} from "../dbAdapter";
 import {PageError} from "./errors";
 import RequestLocals = Express.RequestLocals;
 
@@ -15,7 +15,7 @@ export async function renderScene(req: Request, res: Response, next: NextFunctio
         const questUrl: string = req.params.questName;
         const sceneId: number = Number.parseInt(req.params.sceneId);
 
-        const scene: IScene | undefined = await getSceneByIdAndUrl(sceneId, questUrl);
+        const scene: IScene | undefined = await getScene(sceneId, questUrl);
 
         if (scene === undefined) {
             throw new PageError('404');

@@ -1,7 +1,6 @@
 import {NextFunction, Request, Response} from "express";
-import {getAdventuresCount, getAdventuresWithHashTags, IAdventure, IHashTag} from "../dbAdapter";
+import {getAdventures, getAdventuresIdsByHashTags, IHashTag} from "../dbAdapter";
 import {PageError} from "./errors";
-import {addDefaultImageToAdventure, filterAdventuresWithFirstScenes} from "./adventureController";
 
 export interface AdventureApiData {
     id: number;
@@ -11,26 +10,30 @@ export interface AdventureApiData {
     imageName: string;
     description?: string;
     hashTags: IHashTag[];
-    adventuresCount: number;
 }
 
-export async function getJsonAdventures(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getJsonAdventuresPack(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+        const firstAdventureIdInPack: number = Number.parseInt(req.params.firstAdventureInPackId) - 1;
+        const hashTagRu: string = req.params.hashTagRu;
         const staticBasePath: string = req.locals.staticBasePath;
-        const adventureNumber: string = req.params.number;
 
-        const adventuresCount = await getAdventuresCount();
+        const adventuresInPackCount = 5;
 
-        const adventuresIds: number[] | undefined = adventureNumber === undefined
-            ? undefined
-            : [Number.parseInt(adventureNumber)];
+        const adventuresForLoad = await getAdventuresIdsByHashTags(
+            adventuresInPackCount,
+            firstAdventureIdInPack,
+            hashTagRu
+        );
 
-        const adventures = await getAdventuresWithHashTags(adventuresIds);
-        const adventuresWithFirstScenes: IAdventure[] = await filterAdventuresWithFirstScenes(adventures);
-        addDefaultImageToAdventure(adventuresWithFirstScenes);
+        if (adventuresForLoad.length === 0) {
+            res.send('[]');
+            return;
+        }
 
+        const adventures = await getAdventures(adventuresForLoad);
 
-        const result: AdventureApiData[] = adventuresWithFirstScenes.map(
+        const result: AdventureApiData[] = adventures.map(
             adventure => {
                 const hashTags = adventure.hashTags === undefined ? [] : adventure.hashTags;
                 return {
@@ -41,8 +44,7 @@ export async function getJsonAdventures(req: Request, res: Response, next: NextF
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     imageName: adventure.imageName!,
                     description: adventure.description,
-                    hashTags,
-                    adventuresCount
+                    hashTags
                 }
             }
         );

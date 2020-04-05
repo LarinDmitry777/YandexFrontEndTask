@@ -1,15 +1,12 @@
 import {NextFunction, Request, Response} from 'express';
 import {
-    getAdventuresByHashTag, getHashTagByEnText,
-    IAdventure,
+    getHashTagByEnText,
     IHashTag
 } from "../dbAdapter";
 import {PageError} from "./errors";
-import {addDefaultImageToAdventure, filterAdventuresWithFirstScenes} from "./adventureController";
 import RequestLocals = Express.RequestLocals;
 
 interface PageData extends RequestLocals{
-    adventures: IAdventure[];
     hashTag: IHashTag;
 }
 
@@ -24,18 +21,11 @@ export async function listAdventuresByHashTag(req: Request, res: Response, next:
             throw new PageError('404');
         }
 
-        const adventures = await getAdventuresByHashTag(hashTagTextEn);
-
-        const adventuresWithFirstScene: IAdventure[] = await filterAdventuresWithFirstScenes(adventures);
-
-        addDefaultImageToAdventure(adventures);
-
         const data: PageData = {
             meta,
             lang,
             staticBasePath,
             title,
-            adventures: adventuresWithFirstScene,
             hashTag
         };
 

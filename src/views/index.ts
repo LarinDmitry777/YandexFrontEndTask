@@ -30,15 +30,55 @@ interface IHashTag {
     textEn: string;
 }
 
-const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
+// const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
+const hostUrl = 'http://localhost:3000';
 
 let adventureToRenderId = 1;
 
-const pageHashTag = document
+let pageHashTag = document
     .getElementsByClassName('hash-tag')
     .item(0)
     ?.textContent
     ?.slice(1);
+
+let observer: IntersectionObserver | undefined;
+
+function removeLoadingAmination() {
+    document.getElementsByClassName('load-animation').item(0)?.remove();
+}
+
+function createLoadingAnimation() {
+    removeLoadingAmination();
+    const loadingAnimation = document.createElement('img');
+    loadingAnimation.src = 'https://bit.ly/3aQELtX'
+    loadingAnimation.alt = ''
+    loadingAnimation.className = 'load-animation'
+
+    const body = document.getElementsByTagName('body').item(0);
+    body?.appendChild(loadingAnimation);
+}
+
+function removeAdventuresFromPage(): void {
+    const adventures = document.getElementsByClassName('adventure');
+    for (let i = 0; i < adventures.length; i++) {
+        adventures.item(i)?.remove();
+    }
+}
+
+function updatePageHashTag(textRu: string) {
+    pageHashTag = textRu;
+
+    // @ts-ignore
+    document.getElementsByClassName('hash-tag')
+        ?.item(0)
+        ?.textContent = `#${textRu}`;
+}
+
+function hashTagHandler(hashTagRu: string): void {
+    removeAdventuresFromPage();
+    updatePageHashTag(hashTagRu);
+    adventureToRenderId = 1;
+}
 
 function createWrapperWithLink(adventureData: AdventureApiData): HTMLElement {
     const wrapper = document.createElement('a');
@@ -87,10 +127,10 @@ function createHashTags(adventureData: AdventureApiData): HTMLElement {
     hashTagContainer.classList.add('adventure__hash-tag-container');
 
     adventureData.hashTags.forEach(hashTagObject => {
-        const hashTag = document.createElement('a');
+        const hashTag = document.createElement('div');
         hashTag.classList.add('adventure__hash-tag');
-        hashTag.href = `/hashtags/${hashTagObject.textEn}`;
         hashTag.innerText = `#${hashTagObject.textRu}`;
+        hashTag.addEventListener('click', () => {hashTagHandler(hashTagObject.textRu)})
 
         hashTagContainer.appendChild(hashTag);
     });
@@ -142,21 +182,26 @@ function renderAdventure(adventureData: AdventureApiData): void {
 }
 
 function loadAdventuresPack(): void {
+    console.log('tryLoad');
     const request = pageHashTag === undefined
         ? `${hostUrl}/api/adventuresPack/${adventureToRenderId}`
         : `${hostUrl}/api/adventuresPack/${adventureToRenderId}/${pageHashTag}`;
-
+    disconnectObserver();
     fetch(request)
         .then((value): Promise<AdventureApiData[]> => {
             return value.json()
         })
         .then(adventures => {
+            console.log(adventures.length, adventureToRenderId);
             adventures.forEach(adventure => {
                 renderAdventure(adventure)
             });
             adventureToRenderId += adventures.length;
+            hideLoadingAnimation();
+            if (adventures.length !== 0 ) {
+                connectObserver();
+            }
         })
-        .then(() => {hideLoadingAnimation()})
         .catch(e => console.error(`Request: ${request}\n${e}`));
 }
 
@@ -168,16 +213,26 @@ function createObserver(): void {
         threshold: 1.0
     };
 
-    const callback = function(): void {
-        showLoadingAnimation();
-        loadAdventuresPack();
+    const callback = function(entries: IntersectionObserverEntry[]): void {
+        if (entries[0].isIntersecting) {
+            showLoadingAnimation();
+            loadAdventuresPack();
+        }
     };
 
-    const observer = new IntersectionObserver(callback, options);
+    observer = new IntersectionObserver(callback, options);
 
-    const target = document.getElementsByClassName('load-animation').item(0);
-    observer.observe(target!);
+    connectObserver();
 }
 
+function connectObserver() {
+    const target = document.getElementsByClassName('load-animation').item(0);
+    observer?.observe(target!);
+}
 
+function disconnectObserver() {
+    observer?.disconnect();
+}
+
+createLoadingAnimation();
 createObserver();

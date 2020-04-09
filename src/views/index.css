@@ -10,6 +10,7 @@ a {
 }
 
 .load-animation {
+    border: 5px solid red;
   margin: 200px auto;
   width: 200px;
   display: block;
@@ -17,4 +18,19 @@ a {
 
 .load-animation_hidden {
   visibility: hidden;
+}
+
+.hash-tag {
+    display: block;
+    font-weight: normal;
+    margin-left: 100px;
+    margin-top: 46px;
+    font-family: Gabriela, fantasy;
+    font-size: 42px;
+    line-height: 15px;
+}
+
+.hash-tag_hidden {
+    visibility: hidden;
+    position: absolute;
 }

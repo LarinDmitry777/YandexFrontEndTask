@@ -29,7 +29,7 @@ export async function listAdventuresByHashTag(req: Request, res: Response, next:
             hashTag
         };
 
-        res.render('hashTag', data)
+        res.render('index', data)
     } catch (e) {
         if (e instanceof PageError){
             next(e);

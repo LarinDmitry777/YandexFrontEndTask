@@ -13,7 +13,13 @@
 </head>
 <body>
     {{> header }}
+    {{#if hashTag}}
+        <h1 class="hash-tag">#{{ hashTag.textRu }}</h1>
+    {{else}}
+        <h1 class="hash-tag hash-tag_hidden">#{{ hashTag.textRu }}</h1>
+    {{/if}}
+
     <section class="adventures"></section>
-    <img class="load-animation" src="https://bit.ly/3aQELtX" alt="">
+<!--    <img class="load-animation" src="https://bit.ly/3aQELtX" alt="">-->
 </body>
 </html>

@@ -22,7 +22,6 @@ export default (app: Application): void => {
     app.all('*', processError500);
 
     app.all('*', (_req: Request, res: Response) => {
-        console.log('here');
         res.sendStatus(404);
     });
 }

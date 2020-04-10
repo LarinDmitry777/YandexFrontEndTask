@@ -30,7 +30,7 @@ interface IHashTag {
     textEn: string;
 }
 
-const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
+const hostUrl = window.location.origin;
 
 let adventureToRenderId = 1;
 
@@ -48,6 +48,14 @@ let pageHashTagEn: string | undefined = undefined;
 
 function removeLoadingAmination(): void {
     document.getElementsByClassName('load-animation').item(0)?.remove();
+}
+
+function updateWindowTitle(hashTagRu: string): void {
+    if (hashTagRu === '') {
+        document.title = 'TellTailGames2';
+    } else {
+        document.title = `TellTailGames2 | #${hashTagRu}`;
+    }
 }
 
 function createLoadingAnimation(): void {
@@ -107,7 +115,7 @@ function updatePageHashTag(textRu: string): Promise<void> {
 
 function addPageToHistory(): void {
     const state = { pageHashTag: pageHashTagRu };
-    const title = `${document.title} ${pageHashTagRu}`;
+    const title = `${document.title}`;
     const url = pageHashTagRu === '' ? '/' : `/hashTags/${pageHashTagEn}`;
 
     history.pushState(state, title, url);
@@ -168,6 +176,7 @@ function disconnectObserver(): void {
 
 function loadPageWiaHashTag(hashTagRu: string, isWantAddToHistory: boolean): void {
     if (hashTagRu !== pageHashTagRu) {
+        updateWindowTitle(hashTagRu);
         disconnectObserver();
         removeAdventuresFromPage();
         updatePageHashTag(hashTagRu)
@@ -282,7 +291,9 @@ function createObserver(): void {
     connectObserver();
 }
 
-
-
 createLoadingAnimation();
 createObserver();
+
+if (pageHashTagRu !== undefined) {
+    updateWindowTitle(pageHashTagRu);
+}

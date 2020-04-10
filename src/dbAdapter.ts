@@ -89,6 +89,16 @@ function addDefaultImageToAdventures(adventures: IAdventure[]): IAdventure[] {
     return adventures;
 }
 
+export async function getHashTagEnTextFromBd(textRu: string): Promise<string> {
+    const hashTag = await HashTag.findOne({
+        where: {
+            textRu: textRu
+        }
+    });
+
+    return hashTag === null ? '' : hashTag.textEn;
+}
+
 export async function getHashTagByEnText(hashTagTextEn: string): Promise<IHashTag> {
     const hashTag = await HashTag.findOne({
         where: {
@@ -127,13 +137,13 @@ async function getHashTagsFromManyAdventures(adventureIds: number[]): Promise<IH
 
 export async function getAdventuresIdsByHashTags(limit: number,
                                                  offset: number,
-                                                 hashTagTextRu: string | undefined): Promise<number[]> {
-    if (hashTagTextRu !== undefined) {
+                                                 hashTagTextEn: string | undefined): Promise<number[]> {
+    if (hashTagTextEn !== undefined) {
         return (await HashTagView.findAll({
             limit,
             offset,
             where: {
-                textRu: hashTagTextRu,
+                textEn: hashTagTextEn,
             }
         })).map(hashTagObject => hashTagObject.adventureId);
     }

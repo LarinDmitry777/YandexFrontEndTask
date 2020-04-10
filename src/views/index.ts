@@ -30,27 +30,30 @@ interface IHashTag {
     textEn: string;
 }
 
-// const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
-const hostUrl = 'http://localhost:3000';
+const hostUrl = 'https://larindmitry777-task-2019.herokuapp.com';
 
 let adventureToRenderId = 1;
 
-let pageHashTag = document
+let observer: IntersectionObserver | undefined;
+
+let pageHashTagRu = document
     .getElementsByClassName('hash-tag')
     .item(0)
     ?.textContent
     ?.slice(1);
 
-let observer: IntersectionObserver | undefined;
+let pageHashTagEn: string | undefined = undefined;
 
-function removeLoadingAmination() {
+
+
+function removeLoadingAmination(): void {
     document.getElementsByClassName('load-animation').item(0)?.remove();
 }
 
-function createLoadingAnimation() {
+function createLoadingAnimation(): void {
     removeLoadingAmination();
     const loadingAnimation = document.createElement('img');
-    loadingAnimation.src = 'https://bit.ly/3aQELtX'
+    loadingAnimation.src = `https://tall-tale-cdn.surge.sh/gifs/load.gif`
     loadingAnimation.alt = ''
     loadingAnimation.className = 'load-animation'
 
@@ -59,25 +62,55 @@ function createLoadingAnimation() {
 }
 
 function removeAdventuresFromPage(): void {
-    const adventures = document.getElementsByClassName('adventure');
-    for (let i = 0; i < adventures.length; i++) {
-        adventures.item(i)?.remove();
+    document.getElementsByClassName('adventures').item(0)?.remove();
+    const adventures = document.createElement('section');
+    adventures.classList.add('adventures');
+
+    removeLoadingAmination();
+    document.getElementsByTagName('body')
+        .item(0)
+        ?.appendChild(adventures);
+    createLoadingAnimation();
+}
+
+function updatePageHashTag(textRu: string): Promise<void> {
+    pageHashTagRu = textRu;
+
+    const hashTagElement = document.getElementsByClassName('hash-tag').item(0);
+
+    if (hashTagElement !== null) {
+        if (pageHashTagRu !== '') {
+            hashTagElement.textContent = `#${textRu}`;
+            hashTagElement.classList
+                ?.remove('hash-tag_hidden');
+        } else {
+            hashTagElement.textContent = '';
+            hashTagElement.classList
+                ?.add('hash-tag_hidden');
+        }
     }
+
+    const hashTagEnRequest = `${hostUrl}/api/getHashTagEnText/${pageHashTagRu}`;
+
+    return fetch(hashTagEnRequest)
+        .then(res => {
+            if (res.ok) {
+                return res.text();
+            } else {
+                return '';
+            }
+        })
+        .then((hashTagEn: string) => {
+            pageHashTagEn = hashTagEn
+        });
 }
 
-function updatePageHashTag(textRu: string) {
-    pageHashTag = textRu;
+function addPageToHistory(): void {
+    const state = { pageHashTag: pageHashTagRu };
+    const title = `${document.title} ${pageHashTagRu}`;
+    const url = pageHashTagRu === '' ? '/' : `/hashTags/${pageHashTagEn}`;
 
-    // @ts-ignore
-    document.getElementsByClassName('hash-tag')
-        ?.item(0)
-        ?.textContent = `#${textRu}`;
-}
-
-function hashTagHandler(hashTagRu: string): void {
-    removeAdventuresFromPage();
-    updatePageHashTag(hashTagRu);
-    adventureToRenderId = 1;
+    history.pushState(state, title, url);
 }
 
 function createWrapperWithLink(adventureData: AdventureApiData): HTMLElement {
@@ -122,7 +155,42 @@ function createDescription(adventureData: AdventureApiData): HTMLElement | null 
     return description;
 }
 
-function createHashTags(adventureData: AdventureApiData): HTMLElement {
+function connectObserver(): void {
+    const target = document.getElementsByClassName('load-animation').item(0);
+    if (target !== null){
+        observer?.observe(target);
+    }
+}
+
+function disconnectObserver(): void {
+    observer?.disconnect();
+}
+
+function loadPageWiaHashTag(hashTagRu: string, isWantAddToHistory: boolean): void {
+    if (hashTagRu !== pageHashTagRu) {
+        disconnectObserver();
+        removeAdventuresFromPage();
+        updatePageHashTag(hashTagRu)
+            .then(() => {
+                connectObserver();
+                if (isWantAddToHistory) {
+                    addPageToHistory();
+                }
+            });
+        adventureToRenderId = 1;
+    }
+}
+
+function hashTagHandler(hashTagRu: string): void {
+    loadPageWiaHashTag(hashTagRu, true);
+}
+
+window.onpopstate = function(event: PopStateEvent): void{
+    const historyHashTag = event.state === null ? '' : event.state.pageHashTag;
+    loadPageWiaHashTag(historyHashTag, false);
+};
+
+function createAdventureHashTags(adventureData: AdventureApiData): HTMLElement {
     const hashTagContainer = document.createElement('div');
     hashTagContainer.classList.add('adventure__hash-tag-container');
 
@@ -148,23 +216,9 @@ function createDescriptionColumn(adventureData: AdventureApiData): HTMLElement {
         descriptionColumn.appendChild(description);
     }
 
-    descriptionColumn.appendChild(createHashTags(adventureData));
+    descriptionColumn.appendChild(createAdventureHashTags(adventureData));
 
     return descriptionColumn;
-}
-
-
-
-function showLoadingAnimation(): void {
-    const loadingGif = document.getElementsByClassName('load-animation').item(0);
-    // loadingGif?.setAttribute('hidden', 'hidden');
-    loadingGif?.classList.remove('load-animation_hidden')
-}
-
-function hideLoadingAnimation(): void {
-    const loadingGif = document.getElementsByClassName('load-animation').item(0);
-    // loadingGif?.setAttribute('hidden', 'hidden');
-    loadingGif?.classList.add('load-animation_hidden')
 }
 
 function renderAdventure(adventureData: AdventureApiData): void {
@@ -182,29 +236,32 @@ function renderAdventure(adventureData: AdventureApiData): void {
 }
 
 function loadAdventuresPack(): void {
-    console.log('tryLoad');
-    const request = pageHashTag === undefined
-        ? `${hostUrl}/api/adventuresPack/${adventureToRenderId}`
-        : `${hostUrl}/api/adventuresPack/${adventureToRenderId}/${pageHashTag}`;
+    const adventuresInOnePack = 5;
     disconnectObserver();
-    fetch(request)
-        .then((value): Promise<AdventureApiData[]> => {
-            return value.json()
-        })
-        .then(adventures => {
-            console.log(adventures.length, adventureToRenderId);
-            adventures.forEach(adventure => {
-                renderAdventure(adventure)
-            });
-            adventureToRenderId += adventures.length;
-            hideLoadingAnimation();
-            if (adventures.length !== 0 ) {
-                connectObserver();
-            }
-        })
-        .catch(e => console.error(`Request: ${request}\n${e}`));
-}
 
+    const request = pageHashTagEn === '' || pageHashTagEn === undefined
+                    ? `${hostUrl}/api/adventuresPack/${adventureToRenderId}`
+                    : `${hostUrl}/api/adventuresPack/${pageHashTagEn}/${adventureToRenderId}`;
+    fetch(request)
+    .then(
+        (value): Promise<AdventureApiData[]> => value.json()
+    ).then(adventures => {
+        adventures.forEach(adventure => {
+            renderAdventure(adventure)
+        });
+        adventureToRenderId += adventures.length;
+        removeLoadingAmination();
+        if (adventures.length === adventuresInOnePack ) {
+            createLoadingAnimation();
+            connectObserver();
+        }
+    })
+        .catch(e => {
+            console.error(e)
+            disconnectObserver();
+            connectObserver();
+        });
+}
 
 function createObserver(): void {
     const options = {
@@ -215,7 +272,7 @@ function createObserver(): void {
 
     const callback = function(entries: IntersectionObserverEntry[]): void {
         if (entries[0].isIntersecting) {
-            showLoadingAnimation();
+            createLoadingAnimation()
             loadAdventuresPack();
         }
     };
@@ -225,14 +282,7 @@ function createObserver(): void {
     connectObserver();
 }
 
-function connectObserver() {
-    const target = document.getElementsByClassName('load-animation').item(0);
-    observer?.observe(target!);
-}
 
-function disconnectObserver() {
-    observer?.disconnect();
-}
 
 createLoadingAnimation();
 createObserver();

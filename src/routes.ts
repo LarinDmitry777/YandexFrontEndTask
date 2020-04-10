@@ -4,7 +4,7 @@ import {processError404, processError500} from './controllers/errors';
 import {listAdventures} from "./controllers/adventureController";
 import {listAdventuresByHashTag} from "./controllers/hashTagsController";
 import {renderScene} from "./controllers/sceneController";
-import {getJsonAdventuresPack} from "./controllers/apiController";
+import {getHashTagEnText, getJsonAdventuresPack} from "./controllers/apiController";
 
 export default (app: Application): void => {
     app.get('/', listAdventures);
@@ -13,13 +13,16 @@ export default (app: Application): void => {
 
     app.get('/hashtags/:hashTagTextEn', listAdventuresByHashTag);
 
-    app.get('/api/adventuresPack/:firstAdventureInPackId/:hashTagRu', getJsonAdventuresPack);
+    app.get('/api/adventuresPack/:hashTagEn/:firstAdventureInPackId', getJsonAdventuresPack);
     app.get('/api/adventuresPack/:firstAdventureInPackId', getJsonAdventuresPack);
+
+    app.get('/api/getHashTagEnText/:hashTagRu', getHashTagEnText);
 
     app.all('*', processError404);
     app.all('*', processError500);
 
     app.all('*', (_req: Request, res: Response) => {
+        console.log('here');
         res.sendStatus(404);
     });
 }

@@ -10,8 +10,7 @@ a {
 }
 
 .load-animation {
-    border: 5px solid red;
-  margin: 200px auto;
+  margin: auto;
   width: 200px;
   display: block;
 }
@@ -33,4 +32,9 @@ a {
 .hash-tag_hidden {
     visibility: hidden;
     position: absolute;
+}
+
+.adventures {
+    display: block;
+    padding-bottom: 20px;
 }

@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {getAdventures, getAdventuresIdsByHashTags, IHashTag} from "../dbAdapter";
+import {getAdventures, getAdventuresIdsByHashTags, getHashTagEnTextFromBd, IHashTag} from "../dbAdapter";
 import {PageError} from "./errors";
 
 export interface AdventureApiData {
@@ -12,10 +12,25 @@ export interface AdventureApiData {
     hashTags: IHashTag[];
 }
 
+export async function getHashTagEnText(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const hashTagRu: string = req.params.hashTagRu;
+        const hashTagEn = await getHashTagEnTextFromBd(hashTagRu);
+
+        res.send(hashTagEn);
+    } catch(e) {
+        if (e instanceof PageError) {
+            next(e);
+        } else {
+            next(new PageError('500'));
+        }
+    }
+}
+
 export async function getJsonAdventuresPack(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const firstAdventureIdInPack: number = Number.parseInt(req.params.firstAdventureInPackId) - 1;
-        const hashTagRu: string = req.params.hashTagRu;
+        const hashTagEn: string = req.params.hashTagEn;
         const staticBasePath: string = req.locals.staticBasePath;
 
         const adventuresInPackCount = 5;
@@ -23,11 +38,11 @@ export async function getJsonAdventuresPack(req: Request, res: Response, next: N
         const adventuresForLoad = await getAdventuresIdsByHashTags(
             adventuresInPackCount,
             firstAdventureIdInPack,
-            hashTagRu
+            hashTagEn
         );
 
         if (adventuresForLoad.length === 0) {
-            res.send('[]');
+            res.json([]);
             return;
         }
 
@@ -49,7 +64,7 @@ export async function getJsonAdventuresPack(req: Request, res: Response, next: N
             }
         );
 
-        res.send(JSON.stringify(result));
+        res.json(result);
     } catch(e) {
         if (e instanceof PageError) {
             next(e);

@@ -186,7 +186,7 @@ function loadPageWiaHashTag(hashTagRu: string, isWantAddToHistory: boolean): voi
                     addPageToHistory();
                 }
             });
-        skipAdventureCountParam = 1;
+        skipAdventureCountParam = 0;
     }
 }
 

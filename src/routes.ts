@@ -13,8 +13,7 @@ export default (app: Application): void => {
 
     app.get('/hashtags/:hashTagTextEn', listAdventuresByHashTag);
 
-    app.get('/api/adventuresPack/:hashTagEn/:firstAdventureInPackId', getJsonAdventuresPack);
-    app.get('/api/adventuresPack/:firstAdventureInPackId', getJsonAdventuresPack);
+    app.get('/api/adventures', getJsonAdventuresPack);
 
     app.get('/api/getHashTagEnText/:hashTagRu', getHashTagEnText);
 

@@ -2,7 +2,6 @@ import {NextFunction, Request, Response} from 'express';
 import RequestLocals = Express.RequestLocals;
 import {PageError} from "./errors";
 
-
 interface PageData extends RequestLocals{
     staticBasePath: string;
 }

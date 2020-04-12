@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {getAdventures, getAdventuresIdsByHashTags, getHashTagEnTextFromBd, IHashTag} from "../dbAdapter";
 import {PageError} from "./errors";
+import config from "config";
 
 export interface AdventureApiData {
     id: number;
@@ -10,6 +11,19 @@ export interface AdventureApiData {
     imageName: string;
     description?: string;
     hashTags: IHashTag[];
+}
+
+export function parseRequest(req: string): object {
+    const params: string[] = req.split('/').slice(-1)[0].slice(1).split('&');
+    const result: any = {};
+    for (const param of params) {
+        const separatedParam: string[] = param.split('=');
+        const paramName = separatedParam[0];
+        const paramValue = separatedParam[1];
+        result[paramName] = paramValue;
+    }
+
+    return result
 }
 
 export async function getHashTagEnText(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -29,15 +43,19 @@ export async function getHashTagEnText(req: Request, res: Response, next: NextFu
 
 export async function getJsonAdventuresPack(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const firstAdventureIdInPack: number = Number.parseInt(req.params.firstAdventureInPackId) - 1;
-        const hashTagEn: string = req.params.hashTagEn;
         const staticBasePath: string = req.locals.staticBasePath;
 
-        const adventuresInPackCount = 5;
+        const limit: number = req.query.limit === undefined
+            ? config.get('defaultAdventuresInPack')
+            : Number.parseInt(req.query.limit);
+        const skip: number = req.query.skip === undefined
+            ? 0
+            : Number.parseInt(req.query.skip);
+        const hashTagEn: string = req.query.hashtag;
 
         const adventuresForLoad = await getAdventuresIdsByHashTags(
-            adventuresInPackCount,
-            firstAdventureIdInPack,
+            limit,
+            skip,
             hashTagEn
         );
 

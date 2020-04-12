@@ -13,5 +13,3 @@ declare namespace Express {
         staticBasePath: string;
     }
 }
-
-

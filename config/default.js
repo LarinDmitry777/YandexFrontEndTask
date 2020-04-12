@@ -3,5 +3,6 @@
 module.exports = {
     debug: true,
     port: 3000,
-    staticBasePath: '/'
+    staticBasePath: '/',
+    defaultAdventuresInPack: 5
 };

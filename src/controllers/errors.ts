@@ -20,5 +20,3 @@ export function processError500(err: Error, _req: Request, res: Response, next: 
         next(err);
     }
 }
-
-

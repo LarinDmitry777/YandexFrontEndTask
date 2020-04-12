@@ -3,7 +3,6 @@ import {getAdventureName, getScene, IScene} from "../dbAdapter";
 import {PageError} from "./errors";
 import RequestLocals = Express.RequestLocals;
 
-
 interface PageData extends RequestLocals{
     scene: IScene;
 }

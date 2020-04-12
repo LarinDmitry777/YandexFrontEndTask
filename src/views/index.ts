@@ -32,9 +32,11 @@ interface IHashTag {
 
 const hostUrl = window.location.origin;
 
-let adventureToRenderId = 1;
+let skipAdventureCountParam = 0;
 
 let observer: IntersectionObserver | undefined;
+
+const adventuresInOnePack = 5;
 
 let pageHashTagRu = document
     .getElementsByClassName('hash-tag')
@@ -43,8 +45,6 @@ let pageHashTagRu = document
     ?.slice(1);
 
 let pageHashTagEn: string | undefined = undefined;
-
-
 
 function removeLoadingAmination(): void {
     document.getElementsByClassName('load-animation').item(0)?.remove();
@@ -186,7 +186,7 @@ function loadPageWiaHashTag(hashTagRu: string, isWantAddToHistory: boolean): voi
                     addPageToHistory();
                 }
             });
-        adventureToRenderId = 1;
+        skipAdventureCountParam = 1;
     }
 }
 
@@ -245,12 +245,14 @@ function renderAdventure(adventureData: AdventureApiData): void {
 }
 
 function loadAdventuresPack(): void {
-    const adventuresInOnePack = 5;
     disconnectObserver();
-
-    const request = pageHashTagEn === '' || pageHashTagEn === undefined
-                    ? `${hostUrl}/api/adventuresPack/${adventureToRenderId}`
-                    : `${hostUrl}/api/adventuresPack/${pageHashTagEn}/${adventureToRenderId}`;
+    const requestParams = [];
+    requestParams.push(`skip=${skipAdventureCountParam}`);
+    requestParams.push(`limit=${adventuresInOnePack}`)
+    if (pageHashTagEn !== undefined && pageHashTagEn !== '') {
+        requestParams.push(`hashtag=${pageHashTagEn}`);
+    }
+    const request = `${hostUrl}/api/adventures/?${requestParams.join('&')}`;
     fetch(request)
     .then(
         (value): Promise<AdventureApiData[]> => value.json()
@@ -258,7 +260,7 @@ function loadAdventuresPack(): void {
         adventures.forEach(adventure => {
             renderAdventure(adventure)
         });
-        adventureToRenderId += adventures.length;
+        skipAdventureCountParam += adventures.length;
         removeLoadingAmination();
         if (adventures.length === adventuresInOnePack ) {
             createLoadingAnimation();

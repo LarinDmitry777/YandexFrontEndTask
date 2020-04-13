@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+
+    "rootDir": "./",
+    "outDir": "./../../dist/public/scripts",
+
+    "baseUrl": "src/",
+
+    "target": "es2019",
+    "lib": [
+      "es2019",
+      "dom"
+    ],
+    "module": "esnext",
+    "resolveJsonModule": true,
+
+    "esModuleInterop": true,
+    "importHelpers": true,
+
+    "strict": true,
+
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+
+  "typeRoots": [
+    "src/@types/",
+    "./node_modules/@types"
+  ]
+}

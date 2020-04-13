@@ -22,5 +22,16 @@ module.exports = [
             'src/views/scene.css'
         ],
         separator: '\n'
+    },
+    {
+        prefix: __dirname,
+        endpoint: 'dist/public/bundles/index.js',
+        files: [
+            'dist/public/scripts/Adventure.js',
+            'dist/public/scripts/App.js',
+            'dist/public/scripts/index.js',
+
+        ],
+        separator: '\n'
     }
 ];

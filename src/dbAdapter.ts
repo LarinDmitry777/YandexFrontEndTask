@@ -17,6 +17,7 @@ import bdKeys from "./bdKeys.json"
 import HashTagView from "./models/HastTagView";
 import AdventuresWithFirstScenesView from "./models/AdventuresView";
 import AdventuresView from "./models/AdventuresView";
+import config from "config";
 
 export interface IAdventure {
     id: number;
@@ -82,7 +83,7 @@ export function initDb(): void {
 function addDefaultImageToAdventures(adventures: IAdventure[]): IAdventure[] {
     adventures.forEach(adveture => {
         if (adveture.imageName === null) {
-            adveture.imageName = 'advent_default.png';
+            adveture.imageName = config.get('defaultAdventureImage');
         }
     });
 
@@ -275,7 +276,7 @@ export async function getScene(sceneId: number, adventureUrl: string): Promise<I
         text: sceneData.text,
         imageName: sceneData.imageName,
         sceneId: sceneData.sceneId,
-        textPosition: (textPosition === undefined) ? 'topLeft' : textPosition,
+        textPosition: (textPosition === undefined) ? config.get('defaultTextPosition') : textPosition,
         achievements: await getAchievements(sceneData.sceneId, sceneData.adventureUrl),
         actions: await getActions(sceneData.sceneId, sceneData.adventureUrl),
         firstSceneId: sceneData.firstSceneId

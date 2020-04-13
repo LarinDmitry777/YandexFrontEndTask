@@ -246,14 +246,15 @@ function renderAdventure(adventureData: AdventureApiData): void {
 
 function loadAdventuresPack(): void {
     disconnectObserver();
-    const requestParams = [];
-    requestParams.push(`skip=${skipAdventureCountParam}`);
-    requestParams.push(`limit=${adventuresInOnePack}`)
-    if (pageHashTagEn !== undefined && pageHashTagEn !== '') {
-        requestParams.push(`hashtag=${pageHashTagEn}`);
+
+    const url = new URL(`${hostUrl}/api/adventures/`);
+    url.searchParams.append('skip', skipAdventureCountParam.toString());
+    url.searchParams.append('limit', adventuresInOnePack.toString());
+    if (pageHashTagEn !== undefined){
+        url.searchParams.append('hashtag', pageHashTagEn);
     }
-    const request = `${hostUrl}/api/adventures/?${requestParams.join('&')}`;
-    fetch(request)
+
+    fetch(url.toString())
     .then(
         (value): Promise<AdventureApiData[]> => value.json()
     ).then(adventures => {

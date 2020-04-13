@@ -1,10 +1,11 @@
 'use strict';
 
-const packageMeta = require('../package.json');
+const configDefault = require('./default');
 
-module.exports = {
+const config = {
     debug: false,
     port: process.env.PORT,
-    staticBasePath: `//tall-tale-cdn.surge.sh/`,
-    defaultAdventuresInPack: 5
-};
+    staticBasePath: `//tall-tale-cdn.surge.sh/`
+}
+
+module.exports = {...configDefault, ...config };

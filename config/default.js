@@ -4,5 +4,7 @@ module.exports = {
     debug: true,
     port: 3000,
     staticBasePath: '/',
-    defaultAdventuresInPack: 5
+    defaultAdventuresInPackCount: 5,
+    defaultAdventureImage: 'advent_default.png',
+    defaultTextPosition: 'topLeft'
 };

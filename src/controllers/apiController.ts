@@ -13,19 +13,6 @@ export interface AdventureApiData {
     hashTags: IHashTag[];
 }
 
-export function parseRequest(req: string): object {
-    const params: string[] = req.split('/').slice(-1)[0].slice(1).split('&');
-    const result: any = {};
-    for (const param of params) {
-        const separatedParam: string[] = param.split('=');
-        const paramName = separatedParam[0];
-        const paramValue = separatedParam[1];
-        result[paramName] = paramValue;
-    }
-
-    return result
-}
-
 export async function getHashTagEnText(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const hashTagRu: string = req.params.hashTagRu;
@@ -46,7 +33,7 @@ export async function getJsonAdventuresPack(req: Request, res: Response, next: N
         const staticBasePath: string = req.locals.staticBasePath;
 
         const limit: number = req.query.limit === undefined
-            ? config.get('defaultAdventuresInPack')
+            ? config.get('defaultAdventuresInPackCount')
             : Number.parseInt(req.query.limit);
         const skip: number = req.query.skip === undefined
             ? 0

@@ -14,6 +14,10 @@ import SceneToAchievements from "./models/SceneToAchievement"
 import {Op} from "sequelize";
 import SceneToAchievement from "./models/SceneToAchievement";
 import bdKeys from "./bdKeys.json"
+import HashTagView from "./models/HastTagView";
+import AdventuresWithFirstScenesView from "./models/AdventuresView";
+import AdventuresView from "./models/AdventuresView";
+import config from "config";
 
 export interface IAdventure {
     id: number;
@@ -21,16 +25,16 @@ export interface IAdventure {
     description?: string;
     name: string;
     urlText: string;
+    hashTags?: IHashTag[];
 }
 
 export interface IHashTag {
-    id: number;
     textRu: string;
     textEn: string;
 }
 
-export interface IAdventureWithHashTags extends IAdventure{
-    hashTags?: IHashTag[];
+interface IHashTagWithAdventureId extends IHashTag{
+    adventureId: number;
 }
 
 export interface IScene {
@@ -69,37 +73,89 @@ export function initDb(): void {
         Action,
         Adventure,
         AdventureToHashTag,
-        SceneToAchievements
+        SceneToAchievements,
+        HashTagView,
+        AdventuresWithFirstScenesView
     ];
     new Sequelize(sequelizeOptions);
 }
 
-async function getHashTags(adventureId: number): Promise<IHashTag[]> {
-    const hashTagIds: number[] = (await AdventureToHashTag.findAll({
-        attributes: ['hashTagId'],
-        where: {'adventureId': adventureId}
-    })).map(hashTagObject => hashTagObject.hashTagId);
+function addDefaultImageToAdventures(adventures: IAdventure[]): IAdventure[] {
+    adventures.forEach(adveture => {
+        if (adveture.imageName === null) {
+            adveture.imageName = config.get('defaultAdventureImage');
+        }
+    });
 
-    if (hashTagIds.length === 0) {
-        return [];
+    return adventures;
+}
+
+export async function getHashTagEnTextFromBd(textRu: string): Promise<string> {
+    const hashTag = await HashTag.findOne({
+        where: {
+            textRu: textRu
+        }
+    });
+
+    return hashTag === null ? '' : hashTag.textEn;
+}
+
+export async function getHashTagByEnText(hashTagTextEn: string): Promise<IHashTag> {
+    const hashTag = await HashTag.findOne({
+        where: {
+            textEn: hashTagTextEn
+        }
+    });
+
+    if (hashTag == null) {
+        return {
+            textEn: '',
+            textRu: ''
+        };
     }
 
-    return (await HashTag.findAll({
+    return {
+        textRu: hashTag.textRu,
+        textEn: hashTag.textEn
+    }
+}
+
+async function getHashTagsFromManyAdventures(adventureIds: number[]): Promise<IHashTagWithAdventureId[]> {
+    return (await HashTagView.findAll({
         where: {
-            id: {
-                [Op.or]: hashTagIds
+            adventureId: {
+                [Op.or]: adventureIds
             }
         }
     })).map(hashTagObject => {
         return {
-            id: hashTagObject.id,
+            textRu: hashTagObject.textRu,
             textEn: hashTagObject.textEn,
-            textRu: hashTagObject.textRu
+            adventureId: hashTagObject.adventureId
         }
     });
 }
 
-async function getAdventures(adventuresIds?: number[]): Promise<IAdventure[]> {
+export async function getAdventuresIdsByHashTags(limit: number,
+                                                 offset: number,
+                                                 hashTagTextEn: string | undefined): Promise<number[]> {
+    if (hashTagTextEn !== undefined) {
+        return (await HashTagView.findAll({
+            limit,
+            offset,
+            where: {
+                textEn: hashTagTextEn,
+            }
+        })).map(hashTagObject => hashTagObject.adventureId);
+    }
+
+    return (await AdventuresView.findAll({
+        limit,
+        offset
+    })).map(adventureObject => adventureObject.id);
+}
+
+export async function getAdventures(adventuresIds?: number[]): Promise<IAdventure[]> {
     let searchOptions = {};
     if (adventuresIds !== undefined) {
         searchOptions = {
@@ -109,7 +165,7 @@ async function getAdventures(adventuresIds?: number[]): Promise<IAdventure[]> {
         }
     }
 
-    return (await Adventure.findAll({
+    const adventures: IAdventure[] = (await AdventuresWithFirstScenesView.findAll({
         where: searchOptions
     })).map((adventure: Adventure) => {
         return {
@@ -117,53 +173,32 @@ async function getAdventures(adventuresIds?: number[]): Promise<IAdventure[]> {
             imageName: adventure.imageName,
             description: adventure.description,
             name: adventure.name,
-            urlText: adventure.urlText
+            urlText: adventure.urlText,
+            hashTags: []
         }
     });
-}
 
-export async function getAdventuresWithHashTags(adventuresIds?: number[]): Promise<IAdventure[]> {
-    const adventures: IAdventureWithHashTags[] = await getAdventures(adventuresIds);
+    const loadedAdventuresIds: number[] = adventures.map(adventure => adventure.id);
+    const hashTags: IHashTagWithAdventureId[] = await getHashTagsFromManyAdventures(loadedAdventuresIds);
 
-    for (const adventure of adventures) {
-        adventure.hashTags = await getHashTags(adventure.id);
-    }
+    hashTags.forEach(hashTag => {
+        const adventure = adventures.find(x => x.id === hashTag.adventureId);
+        adventure?.hashTags?.push(hashTag);
+    });
+
+    addDefaultImageToAdventures(adventures);
 
     return adventures;
 }
 
-export async function getHashTagByEnText(hashTagTextEn: string): Promise<IHashTag | undefined> {
-    const hashTagObject = (await HashTag.findOne({
+export async function getAdventuresByHashTag(hashTagTextEn: string): Promise<IAdventure[]> {
+    const adventureIds: number[] = (await HashTagView.findAll({
         where: {
             textEn: hashTagTextEn
         }
-    }));
-    console.log(hashTagObject);
-    if (hashTagObject == undefined) {
-        return undefined;
-    }
+    })).map(hashTagObject => hashTagObject.adventureId);
 
-    return {
-        id: hashTagObject.id,
-        textEn: hashTagObject.textEn,
-        textRu: hashTagObject.textRu
-    }
-}
-
-export async function getAdventuresByHashTag(hashTagTextEn: string): Promise<IAdventureWithHashTags[]> {
-    const hashTag = await getHashTagByEnText(hashTagTextEn);
-
-    if (hashTag === undefined){
-        return [];
-    }
-
-    const adventuresIds = (await AdventureToHashTag.findAll({
-        where: {
-            hashTagId: hashTag.id
-        }
-    }))?.map(adventure => adventure.adventureId);
-
-    return  await getAdventuresWithHashTags(adventuresIds);
+    return  await getAdventures(adventureIds);
 }
 
 async function getAchievements(sceneId: number, adventureUrl: string): Promise<IAchievement[]> {
@@ -211,9 +246,10 @@ async function getActions(sceneId: number, adventureUrl: string): Promise<IActio
     });
 }
 
-export async function getSceneByIdAndUrl(sceneId: number, adventureUrl: string): Promise<IScene | undefined> {
-    const maxPositionId = 4;
-    const minPositionId = 1;
+export async function getScene(sceneId: number, adventureUrl: string): Promise<IScene | undefined> {
+    const maxTextPositionId = 4;
+    const minTextPositionId = 1;
+
     const sceneData = await Scene.findOne({
         where: {
             sceneId,
@@ -224,8 +260,8 @@ export async function getSceneByIdAndUrl(sceneId: number, adventureUrl: string):
         return undefined;
     }
     if (sceneData.textPositionId === undefined ||
-        sceneData.textPositionId > maxPositionId ||
-        sceneData.textPositionId < minPositionId) {
+        sceneData.textPositionId > maxTextPositionId ||
+        sceneData.textPositionId < minTextPositionId) {
         sceneData.textPositionId = 1;
     }
 
@@ -235,28 +271,16 @@ export async function getSceneByIdAndUrl(sceneId: number, adventureUrl: string):
         }
     }))?.textPosition;
 
-
     return  {
         adventureUrl: sceneData.adventureUrl,
         text: sceneData.text,
         imageName: sceneData.imageName,
         sceneId: sceneData.sceneId,
-        textPosition: (textPosition === undefined) ? 'topLeft' : textPosition,
+        textPosition: (textPosition === undefined) ? config.get('defaultTextPosition') : textPosition,
         achievements: await getAchievements(sceneData.sceneId, sceneData.adventureUrl),
         actions: await getActions(sceneData.sceneId, sceneData.adventureUrl),
         firstSceneId: sceneData.firstSceneId
     };
-}
-
-export async function isAdventureHasFirstScene(adventureUrl: string): Promise<boolean> {
-    const firstScene = await Scene.findOne({
-        where: {
-            adventureUrl,
-            sceneId: 1
-        }
-    });
-
-    return firstScene != null;
 }
 
 export async function getAdventureName(adventureUrl: string): Promise<string> {
@@ -267,4 +291,8 @@ export async function getAdventureName(adventureUrl: string): Promise<string> {
     }));
 
     return adventure === null ? '' : adventure.name;
+}
+
+export async function getAdventuresCount(): Promise<number> {
+    return Adventure.count();
 }

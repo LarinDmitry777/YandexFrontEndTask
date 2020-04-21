@@ -13,7 +13,9 @@
     "lint-fix:css": "stylelint \"src/**/*.css\" --fix",
     "deps:production": "npm ci --production",
     "start:docker": "cross-env NODE_PATH=dist/ node dist/",
-    "deploy": "npm run build && heroku container:login && heroku container:push web --app larindmitry777-task-2019 && heroku container:release web --app larindmitry777-task-2019"
+    "deploy:surge": "surge ./dist/public/ tall-tale-cdn.surge.sh",
+    "deploy:heroku": "npm run build && heroku container:login && heroku container:push web --app larindmitry777-task-2019 && heroku container:release web --app larindmitry777-task-2019",
+    "deploy": "npm run deploy:heroku && npm run deploy:surge"
   },
   "keywords": [],
   "author": "",
@@ -47,7 +49,7 @@
     "husky": "4.2.3",
     "npm-run-all": "4.1.5",
     "rimraf": "3.0.2",
-    "simple-file-bundler": "^1.0.6",
+    "simple-file-bundler": "^1.0.7",
     "stylelint": "13.2.0",
     "stylelint-config-standard": "20.0.0",
     "surge": "^0.21.3",

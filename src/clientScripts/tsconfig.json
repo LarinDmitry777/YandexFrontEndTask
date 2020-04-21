@@ -2,19 +2,17 @@
   "compilerOptions": {
     "alwaysStrict": true,
 
-    "rootDir": "src/",
-    "outDir": "dist/",
+    "rootDir": "./",
+    "outDir": "./../../dist/public/scripts",
 
-    "baseUrl": "src/",
+//    "baseUrl": "./",
 
     "target": "es2019",
     "lib": [
       "es2019",
       "dom"
     ],
-    "module": "commonjs",
-    "resolveJsonModule": true,
-//    "sourceMap": true,
+    "module": "esNext",
 
     "esModuleInterop": true,
     "importHelpers": true,
@@ -27,11 +25,9 @@
     "strictNullChecks": true,
 
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
-  },
+    "experimentalDecorators": true,
 
-  "typeRoots": [
-    "src/@types/",
-    "./node_modules/@types"
-  ]
+    "removeComments": true,
+    "skipLibCheck": true
+  }
 }

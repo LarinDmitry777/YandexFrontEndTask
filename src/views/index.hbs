@@ -4,15 +4,21 @@
     <meta charset="{{ meta.charset }}" />
     <title>{{ title }}</title>
     <meta name="description" content="{{ meta.description }}" />
-    <link rel="shortcut icon" href="{{ staticBasePath }}styles/favicon.png" type="image/png" />
+    <link rel="shortcut icon" href="{{ staticBasePath }}favicon.png" type="image/png" />
     <link rel="stylesheet" href="{{ staticBasePath }}bundles/common.css" media="screen" />
     <link rel="stylesheet" href="{{ staticBasePath }}bundles/adventures.css" media="screen" />
+    <script defer src="{{ staticBasePath }}bundles/index.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="prefetch" href="{{ staticBasePath }}styles/scene.css" as="style" />
-
+    <link rel="prefetch" href="{{ staticBasePath }}bundles/scene.css" as="style" />
 </head>
 <body>
     {{> header }}
-    {{> adventures }}
+    {{#if hashTag}}
+        <h1 class="hash-tag">#{{ hashTag.textRu }}</h1>
+    {{else}}
+        <h1 class="hash-tag hash-tag_hidden">#{{ hashTag.textRu }}</h1>
+    {{/if}}
+
+    <section class="adventures"></section>
 </body>
 </html>

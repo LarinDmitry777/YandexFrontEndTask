@@ -10,8 +10,6 @@ declare namespace Express {
             description: string;
         };
         title: string;
-        staticBasePath?: string;
+        staticBasePath: string;
     }
 }
-
-

@@ -1,0 +1,9 @@
+.load-animation {
+  margin: auto;
+  width: 200px;
+  display: block;
+}
+
+.load-animation_hidden {
+  visibility: hidden;
+}

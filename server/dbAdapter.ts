@@ -100,6 +100,16 @@ export async function getHashTagEnTextFromBd(textRu: string): Promise<string> {
     return hashTag === null ? '' : hashTag.textEn;
 }
 
+export async function getHashTagRuTextFromBd(textEn: string): Promise<string> {
+    const hashTag = await HashTag.findOne({
+        where: {
+            textEn: textEn
+        }
+    });
+
+    return hashTag === null ? '' : hashTag.textRu;
+}
+
 export async function getHashTagByEnText(hashTagTextEn: string): Promise<IHashTag> {
     const hashTag = await HashTag.findOne({
         where: {

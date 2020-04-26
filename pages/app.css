@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Gabriela|Roboto&display=swap');
+
+body {
+    width: 1024px;
+    margin: auto;
+}
+
+a {
+    text-decoration: none;
+}

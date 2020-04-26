@@ -1,5 +1,10 @@
 import {NextFunction, Request, Response} from "express";
-import {getAdventures, getAdventuresIdsByHashTags, getHashTagEnTextFromBd, IHashTag} from "../dbAdapter";
+import {
+    getAdventures,
+    getAdventuresIdsByHashTags,
+    getHashTagEnTextFromBd, getHashTagRuTextFromBd,
+    IHashTag
+} from "../dbAdapter";
 import {PageError} from "./errors";
 import config from "config";
 
@@ -28,9 +33,25 @@ export async function getHashTagEnText(req: Request, res: Response, next: NextFu
     }
 }
 
+export async function getHashTagRuText(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const hashTagEn: string = req.params.hashTagEn;
+        const hashTagRu = await getHashTagRuTextFromBd(hashTagEn);
+
+        res.send(hashTagRu);
+    } catch(e) {
+        if (e instanceof PageError) {
+            next(e);
+        } else {
+            next(new PageError('500'));
+        }
+    }
+}
+
+
 export async function getJsonAdventuresPack(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const staticBasePath: string = req.locals.staticBasePath;
+        const staticBasePath: string = config.get('staticBasePath');
 
         const limit: number = req.query.limit === undefined
             ? config.get('defaultAdventuresInPackCount')
@@ -61,7 +82,6 @@ export async function getJsonAdventuresPack(req: Request, res: Response, next: N
                     name: adventure.name,
                     adventureUrl: adventure.urlText,
                     staticBasePath,
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     imageName: adventure.imageName!,
                     description: adventure.description,
                     hashTags

@@ -1,13 +1,4 @@
-import {
-    AllowNull,
-    AutoIncrement,
-    Column,
-    DataType,
-    Model,
-    PrimaryKey,
-    Table,
-    Unique
-} from "sequelize-typescript";
+import {AllowNull, AutoIncrement, Column, DataType, Model, PrimaryKey, Table, Unique} from "sequelize-typescript";
 
 @Table
 export default class Adventure extends Model<Adventure>{

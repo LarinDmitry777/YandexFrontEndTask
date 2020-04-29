@@ -3,19 +3,17 @@ import {parse} from 'url';
 import {Application} from 'express';
 import {getSceneApiData} from "./controllers/sceneController";
 import {getHashTagEnText, getHashTagRuText, getJsonAdventuresPack} from "./controllers/apiController";
-import config from 'config';
+import renderController from "./controllers/renderController";
 
-export default (app: Application) => {
-    app.get('/', (_req, res) => res.renderPage('/list', {staticBasePath: config.get('staticBasePath')}));
-
+export default (app: Application): void => {
+    app.get('/', (req, res) => renderController(req, res, '/list'));
     app.get('/api/quests/:questName/:sceneId', getSceneApiData);
-    app.get('/quests/:adventureName/:sceneId', (_req, res) =>
-        res.renderPage('/scene', {staticBasePath: config.get('staticBasePath')}))
+    app.get('/quests/:adventureName/:sceneId', (req, res) => renderController(req, res, '/scene'))
 
     app.get('/api/adventures', getJsonAdventuresPack);
     app.get('/api/getHashTagEnText/:hashTagRu', getHashTagEnText);
     app.get('/api/getHashTagRuText/:hashTagEn', getHashTagRuText);
-    app.get('/hashtags/:pageHashTagEn', (_req, res) => res.renderPage('/list'))
+    app.get('/hashtags/:pageHashTagEn', (req, res) => renderController(req, res, '/list'))
 
     app.all('*', (req, res) => {
        const handleRequest = req.nextApp.getRequestHandler();

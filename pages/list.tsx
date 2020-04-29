@@ -1,9 +1,9 @@
 import React, {Component, Fragment} from 'react';
-
 import {Header} from "../components/headerComponent";
-import {Adventure, AdventureProps} from "../components/advenutreComponent";
+import {Adventure, AdventureProps} from "../components/adventureComponent";
 import Loading from "../components/loadingComponent";
 import Head from "next/head";
+import {getDataFromQuery} from "../lib/util";
 
 interface AdventuresPageProps {
     pageHashTagEn?: string;
@@ -22,13 +22,10 @@ export default class IndexPage extends Component<AdventuresPageProps, Adventures
     private observer?: IntersectionObserver = undefined;
 
     static getInitialProps({req, query}: any) {
-        const staticBasePath = req ?
-            req.params.staticBasePath :
-            query.staticBasePath;
-        const pageHashTagEn = req ?
-            req.params.pageHashTagEn :
-            query.pageHashTagEn;
-        return {staticBasePath, pageHashTagEn};
+        return {
+            staticBasePath: getDataFromQuery('staticBasePath', req, query),
+            pageHashTagEn: getDataFromQuery('pageHashTagEn', req, query)
+        }
     }
 
     state: AdventuresPageState = {

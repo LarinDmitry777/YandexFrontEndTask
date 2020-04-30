@@ -13,7 +13,8 @@ export default (app: Application): void => {
     app.get('/api/adventures', getJsonAdventuresPack);
     app.get('/api/getHashTagEnText/:hashTagRu', getHashTagEnText);
     app.get('/api/getHashTagRuText/:hashTagEn', getHashTagRuText);
-    app.get('/hashtags/:pageHashTagEn', (req, res) => renderController(req, res, '/list'))
+    app.get('/hashtags/:pageHashTagEn', (req, res) =>
+        renderController(req, res, '/list', { hashTag: req.params.pageHashTagEn}));
 
     app.all('*', (req, res) => {
        const handleRequest = req.nextApp.getRequestHandler();

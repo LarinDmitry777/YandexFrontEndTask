@@ -3,11 +3,14 @@ import {Header} from "../components/headerComponent";
 import {Adventure, AdventureProps} from "../components/adventureComponent";
 import Loading from "../components/loadingComponent";
 import Head from "next/head";
-import {getDataFromQuery} from "../lib/util";
+// import {getDataFromQuery} from "../lib/util";
+import {GetServerSideProps} from "next";
+import config from 'config';
 
 interface AdventuresPageProps {
     pageHashTagEn?: string;
     staticBasePath: string;
+    adventuresInOnePack: number;
 }
 
 interface AdventuresPageState {
@@ -17,16 +20,22 @@ interface AdventuresPageState {
     hashTagTextRu?: string;
 }
 
-export default class IndexPage extends Component<AdventuresPageProps, AdventuresPageState> {
-    private readonly adventuresInOnePack = 5;
-    private observer?: IntersectionObserver = undefined;
-
-    static getInitialProps({req, query}: any) {
-        return {
-            staticBasePath: getDataFromQuery('staticBasePath', req, query),
-            pageHashTagEn: getDataFromQuery('pageHashTagEn', req, query)
+export const getServerSideProps: GetServerSideProps = async context => {
+    const result: { props: AdventuresPageProps} = {
+        props: {
+            staticBasePath: config.get('staticBasePath'),
+            adventuresInOnePack: config.get('defaultAdventuresInPackCount')
         }
     }
+    if (typeof context.query.hashTag === 'string') {
+        result.props.pageHashTagEn = context.query.hashTag;
+    }
+
+    return result;
+}
+
+export default class IndexPage extends Component<AdventuresPageProps, AdventuresPageState> {
+    private observer?: IntersectionObserver = undefined;
 
     state: AdventuresPageState = {
         adventures: [],
@@ -67,7 +76,7 @@ export default class IndexPage extends Component<AdventuresPageProps, Adventures
                     adventures = [];
                 }
                 adventures.push(...loadedAdventures);
-                if (loadedAdventures.length < this.adventuresInOnePack) {
+                if (loadedAdventures.length < this.props.adventuresInOnePack) {
                     this.setState({ isAllAdventuresDownloaded: true });
                 }
                 this.setState({
@@ -91,7 +100,7 @@ export default class IndexPage extends Component<AdventuresPageProps, Adventures
                 adventures: []
             });
             this.tryLoadHashTagTextRu();
-            this.loadAdventures(0, this.adventuresInOnePack);
+            this.loadAdventures(0, this.props.adventuresInOnePack);
         }
     }
 
@@ -104,7 +113,7 @@ export default class IndexPage extends Component<AdventuresPageProps, Adventures
 
         const callback = (entries: IntersectionObserverEntry[]): void => {
             if (entries[0].isIntersecting) {
-                this.loadAdventures(this.state.adventures.length, this.adventuresInOnePack);
+                this.loadAdventures(this.state.adventures.length, this.props.adventuresInOnePack);
             }
         }
 

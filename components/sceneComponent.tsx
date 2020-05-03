@@ -4,11 +4,12 @@ import TextContent from "./scene/textContent";
 import Achievements from "./scene/achievements";
 import Actions from "./scene/actions";
 import Image from "./scene/image";
+import style from "./sceneComponent.module.css";
 
 
 export default function Scene(props: SceneProps): JSX.Element {
     return (
-        <section className='content'>
+        <section className={style.content}>
             <TextContent isHasImage={props.imageName !== null}
                          text={props.text}
                          textPosition={props.textPosition}/>

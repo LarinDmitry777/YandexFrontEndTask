@@ -4,6 +4,7 @@ import Image from "./adventure/image";
 import Title from "./adventure/title";
 import Description from "./adventure/description";
 import HashTags from "./adventure/hashTags";
+import style from "./adventureComponent.module.css";
 
 export interface AdventureProps {
     adventureUrl: string;
@@ -16,12 +17,12 @@ export interface AdventureProps {
 
 export function Adventure(props: AdventureProps): JSX.Element {
     return (
-        <article className='adventure'>
+        <article className={style.adventure}>
             <Image urlText={props.adventureUrl}
                    staticBasePath={props.staticBasePath}
                    imageName={props.imageName}
                    adventureUrl={props.adventureUrl}/>
-            <div className="adventure__description-column">
+            <div className={style.adventure__descriptionColumn}>
                 <Title urlText={props.adventureUrl}
                        name={props.name}
                        adventureUrl={props.adventureUrl}

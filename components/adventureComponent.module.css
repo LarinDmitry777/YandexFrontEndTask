@@ -12,7 +12,7 @@
   height: 150px;
 }
 
-.adventure__description-column {
+.adventure__descriptionColumn {
   float: left;
   display: flex;
   flex-direction: column;
@@ -41,14 +41,14 @@
   width: 522px;
 }
 
-.adventure__hash-tag-container {
+.adventure__hashTagContainer {
   display: flex;
   width: 274px;
   margin-top: 20px;
   flex-wrap: wrap;
 }
 
-.adventure__hash-tag {
+.adventure__hashTag {
   cursor: pointer;
   font-family: Roboto, sans-serif;
   color: #fff;

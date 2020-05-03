@@ -1,4 +1,5 @@
 import React from "react";
+import style from "../sceneComponent.module.css";
 
 interface TextProps {
     isHasImage: boolean;
@@ -6,14 +7,22 @@ interface TextProps {
     textPosition: string;
 }
 
+function formatTextPosition(textPosition: string): string {
+    const formattedTextPosition = textPosition
+        .split('-')
+        .map(s => s[0].toUpperCase() + s.slice(1))
+        .join('');
+    return formattedTextPosition[0].toLowerCase() + formattedTextPosition.slice(1);
+}
+
 export default function TextContent(props: TextProps): JSX.Element {
     const textWrapperClass = props.isHasImage
-        ? 'text-wrapper text-wrapper_with-image'
-        : 'text-wrapper text-wrapper_without-image';
+        ? `${style.textWrapper} ${style.textWrapper_withImage}`
+        : `${style.textWrapper} ${style.textWrapper_withoutImage}`;
 
     return (
         <div className={textWrapperClass}>
-            <div className={`text-wrapper__text text-wrapper__text_${props.textPosition}`}>
+            <div className={`${style.textWrapper__text} ${style['textWrapper__text_' + formatTextPosition(props.textPosition)]}`}>
                 {props.text}
             </div>
         </div>

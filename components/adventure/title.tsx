@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import style from "../adventureComponent.module.css";
 
 interface TitleProps {
     adventureUrl: string;
@@ -21,7 +22,7 @@ export default function Title(props: TitleProps): JSX.Element {
 
     return (
         <Link href={linkHref} as={linkAs}>
-            <h2 className="adventure__title">{props.name}</h2>
+            <h2 className={style.adventure__title}>{props.name}</h2>
         </Link>
     )
 }

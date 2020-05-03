@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import style from "../adventureComponent.module.css";
 
 interface ImageProps {
     adventureUrl: string;
@@ -21,7 +22,7 @@ export default function Image(props: ImageProps): JSX.Element {
 
     return(
         <Link href={linkHref} as={linkAs}>
-        <img className="adventure__image" src={`${props.staticBasePath}images/adventures/${props.imageName}`} alt='' />
+        <img className={style.adventure__image} src={`${props.staticBasePath}images/adventures/${props.imageName}`} alt='' />
         </Link>
 )
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import style from './headerComponent.module.css'
 
 interface HeaderProps {
     staticBasePath: string;
@@ -15,15 +16,15 @@ export function Header(props: HeaderProps): JSX.Element {
     };
 
     return (
-        <header className='header'>
+        <header className={style.header}>
             <Link as={linkAs} href={linkHref}>
-                <img className='header__logo'
+                <img className={style.header__logo}
                      src={`/logo.svg`}
                      alt=''
                 />
             </Link>
             <Link as={linkAs} href={linkHref}>
-                <img className='header__company-name'
+                <img className={style.header__companyName}
                      src={`/company-name.svg`}
                      alt=''
                 />

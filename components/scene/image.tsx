@@ -1,4 +1,5 @@
 import React from "react";
+import style from "../sceneComponent.module.css";
 
 interface ImageProps {
     imageName?: string;
@@ -11,7 +12,7 @@ export default function Image(props: ImageProps): JSX.Element | null {
     }
 
     return (
-        <img className="image"
+        <img className={style.image}
              src={`${props.staticBasePath}images/scenes/${props.imageName}`}
              alt=""/>
     )

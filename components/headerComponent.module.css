@@ -11,7 +11,7 @@
   top: 30px;
 }
 
-.header__company-name {
+.header__companyName {
   cursor: pointer;
   position: absolute;
   left: 99px;

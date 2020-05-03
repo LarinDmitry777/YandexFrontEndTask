@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {Action} from "../../pages/scene";
 import React from "react";
+import style from "../sceneComponent.module.css";
 
 interface ActionsProps {
     staticBasePath: string;
@@ -17,9 +18,9 @@ export default function Actions(props: ActionsProps) {
         }
 
         return (
-            <div className='action-list'>
+            <div className={style.actionList}>
                 <Link as={linkAs} href={linkHref}>
-                    <div className='action-list__action'>
+                    <div className={style.actionList__action}>
                         Начать заново
                     </div>
                 </Link>
@@ -28,7 +29,7 @@ export default function Actions(props: ActionsProps) {
     }
 
     return (
-        <div className='action-list'>
+        <div className={style.actionList}>
             {props.actions.map((action: Action) => {
                 const linkAs = `/quests/${props.adventureUrl}/${action.nextSceneId}`;
                 const linkHref = {
@@ -42,7 +43,7 @@ export default function Actions(props: ActionsProps) {
 
                 return (
                     <Link href={linkHref} as={linkAs} key={action.id}>
-                        <div className='action-list__action'>
+                        <div className={style.actionList__action}>
                             {action.text}
                         </div>
                     </Link>

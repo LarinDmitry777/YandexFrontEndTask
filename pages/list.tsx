@@ -3,9 +3,9 @@ import {Header} from "../components/headerComponent";
 import {Adventure, AdventureProps} from "../components/adventureComponent";
 import Loading from "../components/loadingComponent";
 import Head from "next/head";
-// import {getDataFromQuery} from "../lib/util";
 import {GetServerSideProps} from "next";
-import config from 'config';
+import config from "config";
+import style from "./list.module.css";
 
 interface AdventuresPageProps {
     pageHashTagEn?: string;
@@ -143,9 +143,9 @@ export default class IndexPage extends Component<AdventuresPageProps, Adventures
                 </Head>
                 <Header staticBasePath={'/'}/>
                 {this.state.hashTagTextRu !== undefined
-                    ? <h1 className='hash-tag'>#{this.state.hashTagTextRu}</h1>
+                    ? <h1 className={style.hashTag}>#{this.state.hashTagTextRu}</h1>
                     : null }
-                <section className="adventures">
+                <section className={style.adventures}>
                     {adventures.map(adventure => {
                         return (
                             <Adventure adventureUrl={adventure.adventureUrl}
@@ -158,7 +158,7 @@ export default class IndexPage extends Component<AdventuresPageProps, Adventures
                     })}
                 </section>
                 {loading ? <Loading /> : null}
-                {!isAllAdventuresDownloaded ? <div className='observerElement' /> : null }
+                {!isAllAdventuresDownloaded ? <div className={style.observerElement} /> : null }
             </Fragment>
         )
     }

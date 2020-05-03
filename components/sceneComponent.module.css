@@ -11,7 +11,7 @@
   object-fit: cover;
 }
 
-.action-list {
+.actionList {
   display: flex;
   justify-content: center;
   width: 950px;
@@ -19,11 +19,11 @@
   margin-top: 78px;
 }
 
-.achievements_list ~ .action-list {
+.achievementsList ~ .actionList {
   margin-top: 20px;
 }
 
-.action-list__action {
+.actionList__action {
   display: block;
   cursor: pointer;
   font-family: Roboto, fantasy;
@@ -36,11 +36,11 @@
   margin: 0 25px;
 }
 
-.text-wrapper {
+.textWrapper {
   display: table;
 }
 
-.text-wrapper_with-image {
+.textWrapper_withImage {
   color: white;
   position: absolute;
   top: 89px;
@@ -49,39 +49,39 @@
   height: 320px;
 }
 
-.text-wrapper_without-image {
+.textWrapper_withoutImage {
   margin-left: 75px;
   margin-top: 89px;
   margin-bottom: 89px;
 }
 
-.text-wrapper__text {
+.textWrapper__text {
   width: 890px;
   font-family: Gabriela, serif;
   font-size: 22px;
   line-height: 36px;
 }
 
-.text-wrapper__text_top-left {
+.textWrapper__text_topLeft {
   text-align: left;
 }
 
-.text-wrapper__text_top-right {
+.textWrapper__text_topRight {
   text-align: right;
 }
 
-.text-wrapper__text_bottom-left {
+.textWrapper__text_bottomLeft {
   display: table-cell;
   vertical-align: bottom;
 }
 
-.text-wrapper__text_bottom-right {
+.textWrapper__text_bottomRight {
   display: table-cell;
   vertical-align: bottom;
   text-align: right;
 }
 
-.achievements_list {
+.achievementsList {
   margin-left: 62px;
   margin-top: 37px;
   display: flex;

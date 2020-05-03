@@ -1,5 +1,6 @@
 import {Achievement} from "../../pages/scene";
 import React from "react";
+import style from "../sceneComponent.module.css";
 
 interface AchievementsProps {
     achievements: Achievement[];
@@ -10,17 +11,18 @@ export default function Achievements(props: AchievementsProps): JSX.Element | nu
     if (props.achievements.length === 0) {
         return null;
     }
+
     return (
-        <div className='achievements_list'>
+        <div className={style.achievementsList}>
             {props.achievements.map((achievement: Achievement) => {
                 return (
-                    <div className='achievement' key={achievement.id}>
-                        <img className='achievement__image'
+                    <div className={style.achievement} key={achievement.id}>
+                        <img className={style.achievement__image}
                              src={`${props.staticBasePath}images/achievements/${achievement.imageName}`}
                              alt=''
                         />
-                        <div className='achievement__text'>Достижение получено</div>
-                        <div className='achievement__name'>{achievement.text}</div>
+                        <div className={style.achievement__text}>Достижение получено</div>
+                        <div className={style.achievement__name}>{achievement.text}</div>
                     </div>
                 )
             })}

@@ -1,0 +1,19 @@
+.header {
+  position: relative;
+  height: 95px;
+  border-bottom: 1px solid #919191;
+}
+
+.header__logo {
+  cursor: pointer;
+  position: absolute;
+  left: 57px;
+  top: 30px;
+}
+
+.header__companyName {
+  cursor: pointer;
+  position: absolute;
+  left: 99px;
+  top: 33px;
+}

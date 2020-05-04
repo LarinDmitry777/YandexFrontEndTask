@@ -1,0 +1,118 @@
+.content {
+  position: relative;
+}
+
+.image {
+  display: inline-block;
+  width: 950px;
+  height: 380px;
+  margin-left: 45px;
+  margin-top: 59px;
+  object-fit: cover;
+}
+
+.actionList {
+  display: flex;
+  justify-content: center;
+  width: 950px;
+  margin-left: 45px;
+  margin-top: 78px;
+}
+
+.achievementsList ~ .actionList {
+  margin-top: 20px;
+}
+
+.actionList__action {
+  display: block;
+  cursor: pointer;
+  font-family: Roboto, fantasy;
+  font-size: 34px;
+  line-height: 38px;
+  padding: 10px 20px;
+  color: #fff;
+  background: #555;
+  border-radius: 4px;
+  margin: 0 25px;
+}
+
+.textWrapper {
+  display: table;
+}
+
+.textWrapper_withImage {
+  color: white;
+  position: absolute;
+  top: 89px;
+  left: 75px;
+  width: 890px;
+  height: 320px;
+}
+
+.textWrapper_withoutImage {
+  margin-left: 75px;
+  margin-top: 89px;
+  margin-bottom: 89px;
+}
+
+.textWrapper__text {
+  width: 890px;
+  font-family: Gabriela, serif;
+  font-size: 22px;
+  line-height: 36px;
+}
+
+.textWrapper__text_topLeft {
+  text-align: left;
+}
+
+.textWrapper__text_topRight {
+  text-align: right;
+}
+
+.textWrapper__text_bottomLeft {
+  display: table-cell;
+  vertical-align: bottom;
+}
+
+.textWrapper__text_bottomRight {
+  display: table-cell;
+  vertical-align: bottom;
+  text-align: right;
+}
+
+.achievementsList {
+  margin-left: 62px;
+  margin-top: 37px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.achievement {
+  margin-bottom: 20px;
+  width: 480px;
+}
+
+.achievement__image {
+  border-radius: 50%;
+  float: left;
+  width: 147px;
+  height: 147px;
+}
+
+.achievement__text {
+  margin-left: 21px;
+  float: left;
+  font-family: Gabriela, serif;
+  font-size: 26px;
+  line-height: 38px;
+}
+
+.achievement__name {
+  margin-left: 21px;
+  margin-top: 12px;
+  float: left;
+  font-family: Gabriela, serif;
+  font-size: 40px;
+  line-height: 38px;
+}
